@@ -156,6 +156,206 @@ body {
   color: #c4b49a;
 }
 
+/* ===== Invite Screen ===== */
+.invite-screen { padding-top: 60px; }
+.invite-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  border: 1px solid rgba(139,105,20,.15);
+  position: relative;
+}
+.invite-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(139,105,20,.015) 2px,
+    rgba(139,105,20,.015) 4px
+  );
+  pointer-events: none;
+}
+.invite-card__inner {
+  padding: 36px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.invite-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.invite-sub {
+  font-size: 14px;
+  color: var(--text3);
+  margin-bottom: 28px;
+  font-style: italic;
+}
+.invite-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.invite-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 17px;
+  font-family: var(--font);
+  border: 1px solid rgba(139,105,20,.2);
+  border-radius: 8px;
+  background: #faf6ed;
+  color: var(--text);
+  text-align: center;
+  letter-spacing: 2px;
+  outline: none;
+  transition: border-color .2s;
+}
+.invite-input:focus {
+  border-color: var(--gold);
+}
+.invite-input::placeholder {
+  color: var(--text3);
+  letter-spacing: 1px;
+}
+.invite-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 8px;
+  min-height: 20px;
+  letter-spacing: 1px;
+}
+.invite-hint {
+  font-size: 13px;
+  color: var(--text3);
+  margin-top: 20px;
+  letter-spacing: 1px;
+}
+
+/* ===== Admin Screen ===== */
+.admin-screen { padding-top: 40px; }
+.admin-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  border: 1px solid rgba(139,105,20,.15);
+  position: relative;
+}
+.admin-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(139,105,20,.015) 2px,
+    rgba(139,105,20,.015) 4px
+  );
+  pointer-events: none;
+}
+.admin-card__inner {
+  padding: 32px 28px;
+  text-align: center;
+}
+.admin-card__inner h1 {
+  font-size: 24px;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: 2px;
+}
+.admin-sub {
+  font-size: 13px;
+  color: var(--text3);
+  margin-bottom: 24px;
+}
+.admin-stats {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.admin-stat {
+  background: #faf6ed;
+  border: 1px solid rgba(139,105,20,.12);
+  border-radius: 8px;
+  padding: 16px 28px;
+  text-align: center;
+  min-width: 100px;
+}
+.admin-stat__num {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gold);
+}
+.admin-stat__label {
+  font-size: 12px;
+  color: var(--text3);
+}
+.admin-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.admin-code-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.admin-code-item {
+  background: #faf6ed;
+  border: 1px solid rgba(139,105,20,.15);
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-family: monospace;
+  font-size: 15px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all .15s;
+  letter-spacing: 1px;
+  position: relative;
+}
+.admin-code-item:hover {
+  background: #ede3d0;
+  border-color: var(--gold);
+}
+.admin-code-item:active {
+  transform: scale(.95);
+}
+.admin-code-item.used {
+  border-color: rgba(139,105,20,.3);
+}
+.admin-code-item.used::after {
+  content: '✓';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--gold);
+  color: #fff;
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+}
+
 /* ===== Buttons ===== */
 .btn {
   display: inline-flex;
@@ -612,6 +812,30 @@ body {
     <button class="btn btn-primary" id="startBtn">✨ 开始测试 · Start Quiz</button>
   </div>
 
+  <!-- ====== Invite Code Screen ====== -->
+  <div class="screen invite-screen" id="inviteScreen">
+    <div class="invite-card">
+      <div class="invite-card__inner">
+        <div class="start-icon" style="font-size:56px;margin-bottom:8px;">🔐</div>
+        <h2 class="invite-title">请输入邀请码</h2>
+        <p class="invite-sub">Enter invite code to continue</p>
+        <div class="invite-form">
+          <input
+            type="text"
+            id="inviteInput"
+            class="invite-input"
+            placeholder="输入邀请码..."
+            maxlength="20"
+            autocomplete="off"
+          >
+          <button class="btn btn-primary" id="inviteVerifyBtn" style="min-height:48px;font-size:16px;">验证 · Verify</button>
+        </div>
+        <p class="invite-error" id="inviteError"></p>
+        <p class="invite-hint">🔐 请输入有效的邀请码以继续测试</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ====== Quiz Screen ====== -->
   <div class="screen quiz-screen" id="quizScreen">
     <div class="progress-wrap">
@@ -652,6 +876,31 @@ body {
     <p>添加微信 → 收货好评 → 即可收到红包</p>
     <img src="review-qr.png" alt="微信二维码" class="cashback-qr-img" id="cashbackQrImg">
     <p class="cashback-hint">长按或截图扫码添加</p>
+  </div>
+</div>
+
+<!-- Admin Screen -->
+<div class="screen admin-screen" id="adminScreen">
+  <div class="admin-card">
+    <div class="admin-card__inner">
+      <h1>🔐 邀请码管理</h1>
+      <p class="admin-sub">邀请码可重复使用 · 点击任意邀请码即可复制</p>
+      <div class="admin-stats" id="adminStats">
+        <div class="admin-stat">
+          <span class="admin-stat__num" id="adminTotal">16</span>
+          <span class="admin-stat__label">总邀请码</span>
+        </div>
+        <div class="admin-stat">
+          <span class="admin-stat__num" id="adminUsed">0</span>
+          <span class="admin-stat__label">已使用</span>
+        </div>
+      </div>
+      <div class="admin-actions">
+        <button class="btn btn-primary" id="adminCopyAll" style="font-size:15px;">📋 复制全部邀请码</button>
+        <button class="btn btn-secondary" id="adminBack" style="font-size:15px;">← 返回首页</button>
+      </div>
+      <div class="admin-code-list" id="adminCodeList"></div>
+    </div>
   </div>
 </div>
 
@@ -1024,10 +1273,10 @@ function resetScores() {
 // ============================================================
 
 function showScreen(name) {
-  ['startScreen', 'quizScreen', 'resultScreen'].forEach(id => {
+  ['startScreen', 'inviteScreen', 'quizScreen', 'resultScreen'].forEach(id => {
     $id(id).classList.remove('active');
   });
-  const map = { start: 'startScreen', quiz: 'quizScreen', result: 'resultScreen' };
+  const map = { start: 'startScreen', invite: 'inviteScreen', quiz: 'quizScreen', result: 'resultScreen' };
   $id(map[name]).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1036,11 +1285,182 @@ function showScreen(name) {
 // START SCREEN
 // ============================================================
 
+// ============================================================
+// INVITE CODES
+// ============================================================
+
+// 预生成邀请码池（可重复使用）
+const INVITE_CODES = [
+  'SOUL2024', 'IMMORTAL', 'CHARACTER', 'DESTINY',
+  'HAMLET', 'GATSBY', 'SHERLOCK', 'PHOENIX',
+  'LITERARY', 'STARS', 'WISDOM', 'SPARK',
+  'ZSDQ', 'HELLO', 'WELCOME', 'BEGIN',
+];
+
+function isValidCode(code) {
+  return INVITE_CODES.includes(code.toUpperCase().trim());
+}
+
+function initInviteScreen() {
+  $id('inviteVerifyBtn').addEventListener('click', verifyInviteCode);
+  $id('inviteInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') verifyInviteCode();
+  });
+}
+
+function verifyInviteCode() {
+  const input = $id('inviteInput');
+  const code = input.value.trim();
+
+  if (!code) {
+    $id('inviteError').textContent = '⚠️ 请输入邀请码 · Please enter an invite code';
+    return;
+  }
+
+  if (isValidCode(code)) {
+    $id('inviteError').textContent = '';
+    markCodeUsed(code);
+    localStorage.setItem('sq_invite_verified', 'true');
+    localStorage.setItem('sq_last_code', code.toUpperCase().trim());
+    skipInviteAndStart();
+  } else {
+    $id('inviteError').textContent = '❌ 邀请码无效 · Invalid invite code';
+    input.value = '';
+    input.focus();
+  }
+}
+
+// ============================================================
+// ADMIN SCREEN
+// ============================================================
+
+function initAdminCheck() {
+  // URL hash #admin 或 ?admin 进入管理页
+  if (window.location.hash === '#admin' || window.location.search.includes('admin')) {
+    showAdminScreen();
+  }
+
+  // 监听 hash 变化
+  window.addEventListener('hashchange', function() {
+    if (window.location.hash === '#admin') {
+      showAdminScreen();
+    } else {
+      hideAdminScreen();
+    }
+  });
+}
+
+function showAdminScreen() {
+  ['startScreen', 'inviteScreen', 'quizScreen', 'resultScreen'].forEach(id => {
+    $id(id).classList.remove('active');
+  });
+  $id('adminScreen').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  renderAdminCodes();
+}
+
+function hideAdminScreen() {
+  $id('adminScreen').classList.remove('active');
+  $id('startScreen').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function getUsedCodes() {
+  try {
+    return JSON.parse(localStorage.getItem('sq_used_codes') || '[]');
+  } catch(e) {
+    return [];
+  }
+}
+
+function markCodeUsed(code) {
+  const used = getUsedCodes();
+  const upper = code.toUpperCase().trim();
+  if (!used.includes(upper)) {
+    used.push(upper);
+    localStorage.setItem('sq_used_codes', JSON.stringify(used));
+  }
+}
+
+function renderAdminCodes() {
+  const used = getUsedCodes();
+  const container = $id('adminCodeList');
+  $id('adminTotal').textContent = INVITE_CODES.length;
+  $id('adminUsed').textContent = used.length;
+
+  container.innerHTML = '';
+  INVITE_CODES.forEach(code => {
+    const span = document.createElement('span');
+    span.className = 'admin-code-item' + (used.includes(code) ? ' used' : '');
+    span.textContent = code;
+    span.title = '点击复制';
+    span.addEventListener('click', function() {
+      copyToClipboard(code);
+      showToast('已复制 · Copied: ' + code);
+    });
+    container.appendChild(span);
+  });
+
+  // 复制全部按钮
+  $id('adminCopyAll').onclick = function() {
+    copyToClipboard(INVITE_CODES.join('\n'));
+    showToast('已复制全部 ' + INVITE_CODES.length + ' 个邀请码');
+  };
+
+  // 返回首页
+  $id('adminBack').onclick = function() {
+    window.location.hash = '';
+    hideAdminScreen();
+  };
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text);
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+}
+
+function showToast(msg) {
+  let toast = $id('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#2c1810;color:#faf3e6;padding:12px 24px;border-radius:8px;font-size:14px;z-index:9999;font-family:var(--font);letter-spacing:1px;transition:opacity .3s;pointer-events:none;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timeout);
+  toast._timeout = setTimeout(function() {
+    toast.style.opacity = '0';
+  }, 1800);
+}
+
 function initStartScreen() {
   $id('startBtn').addEventListener('click', startQuiz);
 }
 
 function startQuiz() {
+  // 检查是否已通过邀请码验证
+  if (localStorage.getItem('sq_invite_verified')) {
+    skipInviteAndStart();
+    return;
+  }
+  showScreen('invite');
+  $id('inviteInput').value = '';
+  $id('inviteError').textContent = '';
+}
+
+function skipInviteAndStart() {
   resetScores();
   currentQ = 0;
   resultChar = null;
@@ -1484,7 +1904,9 @@ function toggleLang() {
 
 function init() {
   initStartScreen();
+  initInviteScreen();
   initWatermark();
+  initAdminCheck();
 
   $id('langToggle').addEventListener('click', toggleLang);
   $id('sharePosterBtn').addEventListener('click', showPoster);
