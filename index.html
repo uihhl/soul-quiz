@@ -10,17 +10,22 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root {
-  --g1: #ffd89b;
-  --g2: #f5a3b7;
-  --g3: #c9a7d4;
-  --g4: #a8c8f0;
-  --card: #ffffff;
-  --card-shadow: 0 8px 40px rgba(0,0,0,.08);
-  --text: #2d3436;
-  --text2: #636e72;
-  --text3: #b2bec3;
-  --radius: 20px;
-  --font: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --bg1: #1a0f0a;
+  --bg2: #2c1810;
+  --bg3: #3d2020;
+  --bg4: #2c1e16;
+  --bg5: #1a0f0a;
+  --card: #f7f0e0;
+  --card-alt: #ede3d0;
+  --card-shadow: 0 8px 40px rgba(0,0,0,.35);
+  --text: #2c1810;
+  --text2: #7a6348;
+  --text3: #b8a080;
+  --gold: #8b6914;
+  --gold-dark: #6b3410;
+  --gold-light: #c9a84c;
+  --radius: 12px;
+  --font: "Songti SC","STSong","SimSun","Noto Serif CJK SC","Times New Roman",Georgia,serif;
 }
 
 html, body {
@@ -33,7 +38,7 @@ html, body {
 }
 
 body {
-  background: linear-gradient(160deg, var(--g1) 0%, var(--g2) 35%, var(--g3) 70%, var(--g4) 100%);
+  background: linear-gradient(175deg, var(--bg1) 0%, var(--bg2) 20%, var(--bg3) 45%, var(--bg4) 70%, var(--bg5) 100%);
   background-attachment: fixed;
   min-height: 100dvh;
   display: flex;
@@ -41,6 +46,7 @@ body {
   justify-content: center;
   padding: 16px;
   padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  position: relative;
 }
 
 /* ===== App Container ===== */
@@ -48,6 +54,24 @@ body {
   width: 100%;
   max-width: 460px;
   position: relative;
+  z-index: 1;
+}
+
+/* ===== Page Watermark ===== */
+.page-watermark {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.page-watermark span {
+  position: absolute;
+  color: rgba(200,170,120,.06);
+  font-size: 22px;
+  font-weight: bold;
+  white-space: nowrap;
+  font-family: var(--font);
 }
 
 /* ===== Language Toggle ===== */
@@ -58,18 +82,19 @@ body {
   right: 16px;
   right: max(16px, env(safe-area-inset-right));
   z-index: 100;
-  background: rgba(255,255,255,.85);
+  background: rgba(247,240,224,.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 20px;
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text2);
+  color: #c4b49a;
   cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,.2);
   transition: all .2s;
-  border: none;
+  border: 1px solid rgba(200,170,120,.15);
+  font-family: var(--font);
 }
 .lang-toggle:active { transform: scale(.95); opacity: .8; }
 
@@ -79,7 +104,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: fadeIn .4s ease;
+  animation: fadeIn .5s ease;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -99,21 +124,22 @@ body {
 .start-title {
   font-size: 28px;
   font-weight: 800;
-  color: var(--text);
-  line-height: 1.3;
+  color: #f7f0e0;
+  line-height: 1.5;
   margin-bottom: 8px;
-  letter-spacing: -.3px;
+  letter-spacing: 2px;
 }
 .start-subtitle {
   font-size: 16px;
-  color: var(--text2);
+  color: #c4b49a;
   font-weight: 400;
   margin-bottom: 8px;
   line-height: 1.5;
+  font-style: italic;
 }
 .start-meta {
   font-size: 13px;
-  color: var(--text3);
+  color: #b8a080;
   margin-bottom: 36px;
   display: flex;
   gap: 16px;
@@ -121,11 +147,13 @@ body {
   flex-wrap: wrap;
 }
 .start-meta span {
-  background: rgba(255,255,255,.6);
+  background: rgba(247,240,224,.08);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 6px 14px;
   border-radius: 20px;
+  border: 1px solid rgba(200,170,120,.12);
+  color: #c4b49a;
 }
 
 /* ===== Buttons ===== */
@@ -135,7 +163,7 @@ body {
   justify-content: center;
   gap: 8px;
   border: none;
-  border-radius: 16px;
+  border-radius: 8px;
   font-family: var(--font);
   font-weight: 700;
   font-size: 17px;
@@ -144,20 +172,23 @@ body {
   min-height: 52px;
   padding: 14px 32px;
   -webkit-tap-highlight-color: transparent;
+  letter-spacing: 1px;
 }
 .btn:active { transform: scale(.96); }
 .btn-primary {
-  background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
-  color: #fff;
-  box-shadow: 0 6px 24px rgba(255,107,107,.35);
+  background: linear-gradient(135deg, #8b6914 0%, #6b3410 100%);
+  color: #faf3e6;
+  box-shadow: 0 6px 24px rgba(139,105,20,.3);
   width: 100%;
   font-size: 18px;
+  border: 1px solid rgba(201,168,76,.3);
 }
 .btn-secondary {
   background: var(--card);
   color: var(--text);
   box-shadow: var(--card-shadow);
   width: 100%;
+  border: 1px solid rgba(139,105,20,.1);
 }
 
 /* ===== Progress Bar ===== */
@@ -170,19 +201,20 @@ body {
   justify-content: space-between;
   margin-bottom: 8px;
   font-size: 13px;
-  color: var(--text2);
+  color: #c4b49a;
   font-weight: 500;
 }
 .progress-bar {
   width: 100%;
   height: 6px;
-  background: rgba(255,255,255,.5);
+  background: rgba(247,240,224,.1);
   border-radius: 3px;
   overflow: hidden;
+  border: 1px solid rgba(200,170,120,.1);
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ff9a56, #ff6b6b);
+  background: linear-gradient(90deg, #8b6914, #c9a84c);
   border-radius: 3px;
   transition: width .35s ease;
 }
@@ -195,21 +227,39 @@ body {
   box-shadow: var(--card-shadow);
   width: 100%;
   margin-bottom: 20px;
+  border: 1px solid rgba(139,105,20,.15);
+  position: relative;
+}
+/* Parchment texture line effect */
+.question-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(139,105,20,.015) 2px,
+    rgba(139,105,20,.015) 4px
+  );
+  pointer-events: none;
 }
 .question-number {
   font-size: 13px;
-  color: #ff6b6b;
+  color: var(--gold);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 3px;
   margin-bottom: 12px;
 }
 .question-text {
   font-size: 22px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.6;
   color: var(--text);
   margin-bottom: 24px;
+  letter-spacing: 1px;
 }
 
 /* ===== Option Cards ===== */
@@ -219,9 +269,9 @@ body {
   align-items: center;
   gap: 14px;
   width: 100%;
-  background: #f8f9fa;
-  border: 2px solid transparent;
-  border-radius: 16px;
+  background: #faf6ed;
+  border: 1px solid rgba(139,105,20,.1);
+  border-radius: 8px;
   padding: 16px 18px;
   font-family: var(--font);
   font-size: 16px;
@@ -229,25 +279,30 @@ body {
   cursor: pointer;
   transition: all .2s;
   text-align: left;
-  line-height: 1.4;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
   -webkit-tap-highlight-color: transparent;
 }
-.option-card:active { transform: scale(.98); background: #eef0f2; }
+.option-card:active { transform: scale(.98); background: #ede3d0; border-color: rgba(139,105,20,.25); }
 .option-letter {
   flex-shrink: 0;
   width: 36px; height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff9a56, #ff6b6b);
-  color: #fff;
+  background: linear-gradient(135deg, #8b6914, #6b3410);
+  color: #faf3e6;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   font-size: 15px;
+  font-family: var(--font);
 }
 
 /* ===== Result Screen ===== */
-.result-screen { padding-top: 8px; }
+.result-screen {
+  padding-top: max(30px, env(safe-area-inset-top));
+  padding-bottom: 40px;
+}
 
 .result-card {
   background: var(--card);
@@ -256,12 +311,13 @@ body {
   width: 100%;
   overflow: hidden;
   margin-bottom: 20px;
+  border: 1px solid rgba(139,105,20,.15);
 }
 
 .result-header {
-  padding: 32px 24px 20px;
+  padding: 36px 24px 24px;
   text-align: center;
-  color: #fff;
+  color: #faf3e6;
   position: relative;
 }
 .result-emoji {
@@ -273,7 +329,7 @@ body {
 .result-name-zh {
   font-size: 32px;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 4px;
   margin-bottom: 4px;
 }
 .result-name-en {
@@ -281,18 +337,21 @@ body {
   font-weight: 500;
   opacity: .85;
   margin-bottom: 16px;
+  font-style: italic;
+  letter-spacing: 1px;
 }
 .result-match {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255,255,255,.25);
+  background: rgba(255,255,255,.18);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 8px 20px;
   border-radius: 24px;
   font-size: 16px;
   font-weight: 700;
+  border: 1px solid rgba(255,255,255,.15);
 }
 .result-match .pct { font-size: 28px; font-weight: 900; }
 
@@ -305,7 +364,7 @@ body {
   font-weight: 700;
   color: var(--text3);
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 3px;
   margin-bottom: 8px;
 }
 .result-traits {
@@ -316,29 +375,32 @@ body {
 .trait-tag {
   font-size: 13px;
   padding: 6px 14px;
-  border-radius: 20px;
-  background: #f8f9fa;
+  border-radius: 4px;
+  background: #faf6ed;
   color: var(--text2);
   font-weight: 500;
+  border: 1px solid rgba(139,105,20,.08);
+  letter-spacing: 1px;
 }
 
 .result-quote {
   font-size: 17px;
   font-style: italic;
   color: var(--text);
-  line-height: 1.6;
+  line-height: 1.8;
   padding: 16px 20px;
-  background: #fdf6f0;
-  border-radius: 14px;
-  border-left: 3px solid #ff9a56;
+  background: #faf3dc;
+  border-radius: 4px;
+  border-left: 3px solid var(--gold);
   position: relative;
+  letter-spacing: 0.5px;
 }
 .result-quote::before {
   content: '"';
   position: absolute;
   top: 2px; left: 10px;
   font-size: 36px;
-  color: #ff9a56;
+  color: var(--gold);
   font-style: normal;
   font-weight: 900;
   line-height: 1;
@@ -350,18 +412,21 @@ body {
   align-items: center;
   gap: 12px;
   padding: 14px 18px;
-  background: #f8f9fa;
-  border-radius: 14px;
+  background: #faf6ed;
+  border-radius: 4px;
   font-size: 15px;
   color: var(--text);
   font-weight: 600;
+  border: 1px solid rgba(139,105,20,.08);
+  letter-spacing: 0.5px;
 }
 .result-book .book-icon { font-size: 28px; }
 
 .result-desc {
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 1.8;
   color: var(--text2);
+  letter-spacing: 0.5px;
 }
 
 .result-actions {
@@ -372,12 +437,117 @@ body {
   margin-bottom: 24px;
 }
 
+/* ===== Result QR Section ===== */
+.result-qr-section {
+  width: 100%;
+  background: rgba(247,240,224,.06);
+  border: 1px solid rgba(200,170,120,.1);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.result-qr-section img {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 2px solid rgba(200,170,120,.15);
+}
+.result-qr-text {
+  font-size: 14px;
+  color: #c4b49a;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.result-qr-sub {
+  font-size: 12px;
+  color: #8b7355;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Cashback Button & Modal ===== */
+.btn-cashback {
+  background: rgba(247,240,224,.08);
+  color: #c9a84c;
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: 8px;
+  width: 100%;
+  letter-spacing: 1px;
+  font-family: var(--font);
+}
+.btn-cashback:hover { background: rgba(247,240,224,.12); }
+
+.cashback-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.8);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.cashback-overlay.show { display: flex; }
+
+.cashback-modal {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  text-align: center;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  position: relative;
+  border: 1px solid rgba(139,105,20,.2);
+}
+.cashback-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text3);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: var(--font);
+}
+.cashback-close:active { opacity: .6; }
+.cashback-modal h3 {
+  font-size: 22px;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.cashback-modal p {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+.cashback-modal .cashback-qr-img {
+  width: 180px;
+  height: 180px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 2px solid rgba(139,105,20,.1);
+}
+.cashback-modal .cashback-hint {
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 0;
+}
+
 /* ===== Poster Modal ===== */
 .poster-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.75);
+  background: rgba(0,0,0,.85);
   z-index: 200;
   align-items: center;
   justify-content: center;
@@ -389,26 +559,27 @@ body {
 .poster-overlay img {
   max-width: 100%;
   max-height: 70vh;
-  border-radius: 16px;
-  box-shadow: 0 16px 60px rgba(0,0,0,.3);
+  border-radius: 12px;
+  box-shadow: 0 16px 60px rgba(0,0,0,.5);
 }
 .poster-hint {
-  color: #fff;
+  color: #c4b49a;
   font-size: 14px;
   font-weight: 500;
   text-align: center;
   opacity: .9;
 }
 .poster-close {
-  background: rgba(255,255,255,.2);
-  color: #fff;
-  border: none;
-  border-radius: 24px;
+  background: rgba(247,240,224,.12);
+  color: #c4b49a;
+  border: 1px solid rgba(200,170,120,.2);
+  border-radius: 8px;
   padding: 10px 28px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font);
+  letter-spacing: 1px;
 }
 .poster-close:active { opacity: .7; }
 
@@ -463,8 +634,28 @@ body {
       <button class="btn btn-primary" id="sharePosterBtn">🖼 生成分享海报 · Share Poster</button>
       <button class="btn btn-secondary" id="retakeBtn">🔄 重新测试 · Retake Quiz</button>
     </div>
+    <div class="result-qr-section">
+      <img src="xhs-qr.png" alt="关注账号" id="resultQrImg">
+      <p class="result-qr-text">📱 关注账号，获取更多有趣测试</p>
+      <p class="result-qr-sub">Follow us for more fun quizzes</p>
+    </div>
+    <button class="btn btn-cashback" id="cashbackBtn">🧧 好评返现 · Leave a review</button>
   </div>
 </div>
+
+<!-- Cashback Modal -->
+<div class="cashback-overlay" id="cashbackOverlay">
+  <div class="cashback-modal">
+    <button class="cashback-close" id="cashbackClose">✕</button>
+    <h3>🧧 好评返现</h3>
+    <p>添加微信 → 收货好评 → 即可收到红包</p>
+    <img src="review-qr.png" alt="微信二维码" class="cashback-qr-img" id="cashbackQrImg">
+    <p class="cashback-hint">长按或截图扫码添加</p>
+  </div>
+</div>
+
+<!-- Page Watermark -->
+<div class="page-watermark" id="pageWatermark"></div>
 
 <!-- Poster Modal -->
 <div class="poster-overlay" id="posterOverlay">
@@ -1269,6 +1460,46 @@ function hidePoster() {
 }
 
 // ============================================================
+// CASHBACK MODAL
+// ============================================================
+
+function openCashback() {
+  $id('cashbackOverlay').classList.add('show');
+}
+
+function closeCashback() {
+  $id('cashbackOverlay').classList.remove('show');
+}
+
+// ============================================================
+// PAGE WATERMARK
+// ============================================================
+
+function initWatermark() {
+  const container = $id('pageWatermark');
+  const text = '小红书 自我说明书l71';
+
+  // Create a grid of watermark texts
+  const cols = 4;
+  const rows = 8;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const cellW = w / cols;
+  const cellH = h / rows;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const span = document.createElement('span');
+      span.textContent = text;
+      span.style.left = (col * cellW + cellW / 2) + 'px';
+      span.style.top = (row * cellH + cellH / 2) + 'px';
+      span.style.transform = 'translate(-50%, -50%) rotate(-25deg)';
+      container.appendChild(span);
+    }
+  }
+}
+
+// ============================================================
 // RETRY
 // ============================================================
 
@@ -1301,6 +1532,7 @@ function toggleLang() {
 
 function init() {
   initStartScreen();
+  initWatermark();
 
   $id('langToggle').addEventListener('click', toggleLang);
   $id('sharePosterBtn').addEventListener('click', showPoster);
@@ -1308,6 +1540,11 @@ function init() {
   $id('posterClose').addEventListener('click', hidePoster);
   $id('posterOverlay').addEventListener('click', function(e) {
     if (e.target === this) hidePoster();
+  });
+  $id('cashbackBtn').addEventListener('click', openCashback);
+  $id('cashbackClose').addEventListener('click', closeCashback);
+  $id('cashbackOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeCashback();
   });
 
   resetScores();
