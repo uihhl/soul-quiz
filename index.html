@@ -1203,7 +1203,7 @@ function generatePoster() {
   if (!resultChar) return;
 
   const canvas = $id('posterCanvas');
-  const W = 750, H = 850;
+  const W = 750, H = 1150;
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
@@ -1223,7 +1223,7 @@ function generatePoster() {
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 60px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.textAlign = 'center';
-  for (let row = -2; row < 4; row++) {
+  for (let row = -2; row < 5; row++) {
     for (let col = -2; col < 6; col++) {
       ctx.fillText('小红书 自我说明书l71', W / 2 + col * 350, H / 2 + row * 180);
     }
@@ -1231,22 +1231,22 @@ function generatePoster() {
   ctx.restore();
 
   // ── 白色卡片 ──
-  const cardX = 36, cardY = 36, cardW = W - 72, cardH = H - 72;
+  const cardX = 40, cardY = 40, cardW = W - 80, cardH = H - 80;
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = 'rgba(0,0,0,0.12)';
-  ctx.shadowBlur = 36;
-  ctx.shadowOffsetY = 6;
-  roundRect(ctx, cardX, cardY, cardW, cardH, 20);
+  ctx.shadowBlur = 40;
+  ctx.shadowOffsetY = 8;
+  roundRect(ctx, cardX, cardY, cardW, cardH, 24);
   ctx.fill();
   ctx.shadowColor = 'transparent';
   ctx.shadowBlur = 0;
   ctx.shadowOffsetY = 0;
 
   // ── 顶部彩色 Header ──
-  const headerH = 200;
+  const headerH = 280;
   ctx.save();
   ctx.beginPath();
-  roundRect(ctx, cardX, cardY, cardW, cardH, 20);
+  roundRect(ctx, cardX, cardY, cardW, cardH, 24);
   ctx.clip();
   const headerGrad = ctx.createLinearGradient(0, cardY, 0, cardY + headerH);
   headerGrad.addColorStop(0, resultChar.color);
@@ -1256,38 +1256,38 @@ function generatePoster() {
   ctx.restore();
 
   // Emoji
-  ctx.font = '78px sans-serif';
+  ctx.font = '88px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(resultChar.emoji, W / 2, cardY + 90);
+  ctx.fillText(resultChar.emoji, W / 2, cardY + 120);
 
   // 名字
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 42px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
-  ctx.fillText(resultChar.nameZH, W / 2, cardY + 148);
-  ctx.font = '16px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.font = 'bold 48px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
+  ctx.fillText(resultChar.nameZH, W / 2, cardY + 188);
+  ctx.font = '18px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.8)';
-  ctx.fillText(resultChar.nameEN, W / 2, cardY + 176);
+  ctx.fillText(resultChar.nameEN, W / 2, cardY + 220);
 
   // 匹配度
   const pct = Math.min(98, Math.max(60,
     Math.round((scores[resultChar.id] / Object.values(scores).reduce((a, b) => a + b, 0)) * 100) + 30
   ));
-  ctx.font = 'bold 56px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.font = 'bold 60px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(pct + '%', W / 2, cardY + headerH - 12);
+  ctx.fillText(pct + '%', W / 2, cardY + headerH - 16);
 
   // ── 正文区域 ──
-  const pad = cardX + 28;
-  const contentW = cardW - 56;
-  let y = cardY + headerH + 20;
+  const pad = cardX + 36;
+  const contentW = cardW - 72;
+  let y = cardY + headerH + 32;
   const isZH = lang === 'ZH';
 
   function drawLabel(text) {
     ctx.fillStyle = '#b2bec3';
-    ctx.font = 'bold 12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.font = 'bold 14px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText(text, pad, y);
-    y += 16;
+    y += 22;
   }
 
   function drawBody(text, fontSize, lineH, color) {
@@ -1297,19 +1297,19 @@ function generatePoster() {
     const lines = wrapLines(ctx, text, contentW);
     lines.forEach(line => {
       ctx.fillText(line, pad, y);
-      y += lineH || 24;
+      y += lineH || 26;
     });
   }
 
   // 1) 灵魂共鸣
   drawLabel(isZH ? '💬 灵魂共鸣' : '💬 Soul Resonance');
-  drawBody(isZH ? resultChar.descZH : resultChar.descEN, 16, 24);
-  y += 4;
+  drawBody(isZH ? resultChar.descZH : resultChar.descEN, 17, 26);
+  y += 14;
 
   // 2) 来源
   drawLabel(isZH ? '📖 来源' : '📖 Source');
-  drawBody(resultChar.source, 14, 22, '#636e72');
-  y += 4;
+  drawBody(resultChar.source, 15, 24, '#636e72');
+  y += 14;
 
   // 3) 性格标签
   drawLabel(isZH ? '🏷 性格标签' : '🏷 Traits');
@@ -1317,62 +1317,62 @@ function generatePoster() {
   let tagX = pad;
   let tagStartY = y;
   traits.forEach(tag => {
-    const tagW = ctx.measureText(tag).width + 26;
+    const tagW = ctx.measureText(tag).width + 30;
     if (tagX + tagW > pad + contentW) {
       tagX = pad;
-      y += 30;
+      y += 34;
     }
     ctx.fillStyle = '#f8f9fa';
-    roundRect(ctx, tagX, y - 13, tagW, 26, 13);
+    roundRect(ctx, tagX, y - 14, tagW, 30, 15);
     ctx.fill();
     ctx.fillStyle = '#636e72';
-    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(tag, tagX + 13, y + 4);
-    tagX += tagW + 8;
+    ctx.fillText(tag, tagX + 15, y + 5);
+    tagX += tagW + 10;
   });
-  y = Math.max(y + 24, tagStartY + 36);
-  y += 4;
+  y = Math.max(y + 28, tagStartY + 40);
+  y += 10;
 
   // 4) 灵魂金句
   drawLabel(isZH ? '✨ 灵魂金句' : '✨ Signature Quote');
   const quote = isZH ? resultChar.quoteZH : resultChar.quoteEN;
   ctx.fillStyle = '#fdf6f0';
-  roundRect(ctx, pad, y - 2, contentW, 46, 10);
+  roundRect(ctx, pad, y - 2, contentW, 56, 12);
   ctx.fill();
   ctx.fillStyle = '#ff9a56';
-  ctx.fillRect(pad + 4, y + 4, 3, 28);
+  ctx.fillRect(pad + 5, y + 6, 3, 32);
   ctx.fillStyle = '#2d3436';
-  ctx.font = 'italic 15px "PingFang SC","Georgia",serif';
+  ctx.font = 'italic 16px "PingFang SC","Georgia",serif';
   ctx.textAlign = 'left';
-  ctx.fillText('"' + quote + '"', pad + 16, y + 24);
-  y += 52;
-  y += 4;
+  ctx.fillText('"' + quote + '"', pad + 18, y + 30);
+  y += 64;
+  y += 12;
 
   // 5) 推荐阅读
   drawLabel(isZH ? '📚 推荐阅读' : '📚 Recommended Read');
   ctx.fillStyle = '#f8f9fa';
-  roundRect(ctx, pad, y - 2, contentW, 32, 10);
+  roundRect(ctx, pad, y - 2, contentW, 40, 12);
   ctx.fill();
   ctx.fillStyle = '#2d3436';
-  ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.font = '15px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.textAlign = 'left';
   const bookText = isZH ? resultChar.bookZH : resultChar.bookEN;
-  ctx.fillText('📚  ' + bookText, pad + 12, y + 20);
-  y += 44;
+  ctx.fillText('📚  ' + bookText, pad + 16, y + 26);
+  y += 50;
 
   // ── 底部水印 ──
-  y += 16;
+  y += 24;
   ctx.fillStyle = '#b2bec3';
-  ctx.font = '15px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.font = '16px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(
     isZH ? '你与哪位不朽的主角共享灵魂？' : 'Which immortal protagonist shares your soul?',
     W / 2, y
   );
-  y += 26;
+  y += 30;
   ctx.fillStyle = '#c9a7d4';
-  ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.fillText('小红书 自我说明书l71', W / 2, y);
 
   return canvas.toDataURL('image/png', 0.92);
