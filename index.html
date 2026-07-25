@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>你与哪位不朽的主角共享灵魂？</title>
+<meta name="description" content="12位文学与历史上的不朽灵魂 — 测测你的灵魂与谁共鸣最深。Which immortal protagonist shares your soul?">
+<style>
+/* ===== Reset & Variables ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --g1: #ffd89b;
+  --g2: #f5a3b7;
+  --g3: #c9a7d4;
+  --g4: #a8c8f0;
+  --card: #ffffff;
+  --card-shadow: 0 8px 40px rgba(0,0,0,.08);
+  --text: #2d3436;
+  --text2: #636e72;
+  --text3: #b2bec3;
+  --radius: 20px;
+  --font: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  background: linear-gradient(160deg, var(--g1) 0%, var(--g2) 35%, var(--g3) 70%, var(--g4) 100%);
+  background-attachment: fixed;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+/* ===== App Container ===== */
+.app {
+  width: 100%;
+  max-width: 460px;
+  position: relative;
+}
+
+/* ===== Language Toggle ===== */
+.lang-toggle {
+  position: fixed;
+  top: 16px;
+  top: max(16px, env(safe-area-inset-top));
+  right: 16px;
+  right: max(16px, env(safe-area-inset-right));
+  z-index: 100;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  transition: all .2s;
+  border: none;
+}
+.lang-toggle:active { transform: scale(.95); opacity: .8; }
+
+/* ===== Screen ===== */
+.screen { display: none; }
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn .4s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== Start Screen ===== */
+.start-screen { text-align: center; padding-top: 40px; }
+
+.start-icon {
+  font-size: 72px;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.start-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 8px;
+  letter-spacing: -.3px;
+}
+.start-subtitle {
+  font-size: 16px;
+  color: var(--text2);
+  font-weight: 400;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.start-meta {
+  font-size: 13px;
+  color: var(--text3);
+  margin-bottom: 36px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.start-meta span {
+  background: rgba(255,255,255,.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 16px;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 17px;
+  cursor: pointer;
+  transition: all .2s;
+  min-height: 52px;
+  padding: 14px 32px;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.96); }
+.btn-primary {
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(255,107,107,.35);
+  width: 100%;
+  font-size: 18px;
+}
+.btn-secondary {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--card-shadow);
+  width: 100%;
+}
+
+/* ===== Progress Bar ===== */
+.progress-wrap {
+  width: 100%;
+  margin-bottom: 28px;
+}
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--text2);
+  font-weight: 500;
+}
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,.5);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff9a56, #ff6b6b);
+  border-radius: 3px;
+  transition: width .35s ease;
+}
+
+/* ===== Question Card ===== */
+.question-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  margin-bottom: 20px;
+}
+.question-number {
+  font-size: 13px;
+  color: #ff6b6b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.question-text {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+/* ===== Option Cards ===== */
+.options { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.option-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-family: var(--font);
+  font-size: 16px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all .2s;
+  text-align: left;
+  line-height: 1.4;
+  -webkit-tap-highlight-color: transparent;
+}
+.option-card:active { transform: scale(.98); background: #eef0f2; }
+.option-letter {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9a56, #ff6b6b);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+/* ===== Result Screen ===== */
+.result-screen { padding-top: 8px; }
+
+.result-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.result-header {
+  padding: 32px 24px 20px;
+  text-align: center;
+  color: #fff;
+  position: relative;
+}
+.result-emoji {
+  font-size: 80px;
+  display: block;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+.result-name-zh {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0;
+  margin-bottom: 4px;
+}
+.result-name-en {
+  font-size: 15px;
+  font-weight: 500;
+  opacity: .85;
+  margin-bottom: 16px;
+}
+.result-match {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 20px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.result-match .pct { font-size: 28px; font-weight: 900; }
+
+.result-body { padding: 24px; }
+
+.result-section { margin-bottom: 20px; }
+.result-section:last-child { margin-bottom: 0; }
+.result-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+.result-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.trait-tag {
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #f8f9fa;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.result-quote {
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.6;
+  padding: 16px 20px;
+  background: #fdf6f0;
+  border-radius: 14px;
+  border-left: 3px solid #ff9a56;
+  position: relative;
+}
+.result-quote::before {
+  content: '"';
+  position: absolute;
+  top: 2px; left: 10px;
+  font-size: 36px;
+  color: #ff9a56;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  opacity: .3;
+}
+
+.result-book {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #f8f9fa;
+  border-radius: 14px;
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 600;
+}
+.result-book .book-icon { font-size: 28px; }
+
+.result-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+/* ===== Poster Modal ===== */
+.poster-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  flex-direction: column;
+  gap: 16px;
+}
+.poster-overlay.show { display: flex; }
+.poster-overlay img {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 16px;
+  box-shadow: 0 16px 60px rgba(0,0,0,.3);
+}
+.poster-hint {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  opacity: .9;
+}
+.poster-close {
+  background: rgba(255,255,255,.2);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+}
+.poster-close:active { opacity: .7; }
+
+/* ===== Responsive ===== */
+@media (max-width: 380px) {
+  .start-title { font-size: 24px; }
+  .question-text { font-size: 20px; }
+  .result-name-zh { font-size: 28px; }
+  .option-card { font-size: 15px; padding: 14px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Language Toggle -->
+  <button class="lang-toggle" id="langToggle" aria-label="Switch language">EN</button>
+
+  <!-- ====== Start Screen ====== -->
+  <div class="screen start-screen active" id="startScreen">
+    <div class="start-icon">📜</div>
+    <h1 class="start-title">你与哪位不朽的主角<br>共享灵魂？</h1>
+    <p class="start-subtitle">Which immortal protagonist shares your soul?</p>
+    <div class="start-meta">
+      <span>🎭 12 位角色</span>
+      <span>📝 10 道题目</span>
+      <span>⏱ 约 2 分钟</span>
+    </div>
+    <button class="btn btn-primary" id="startBtn">✨ 开始测试 · Start Quiz</button>
+  </div>
+
+  <!-- ====== Quiz Screen ====== -->
+  <div class="screen quiz-screen" id="quizScreen">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="progressLabel">Question 1 / 10</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div class="question-card">
+      <div class="question-number" id="questionNumber">QUESTION 1</div>
+      <h2 class="question-text" id="questionText"></h2>
+    </div>
+    <div class="options" id="optionsContainer"></div>
+  </div>
+
+  <!-- ====== Result Screen ====== -->
+  <div class="screen result-screen" id="resultScreen">
+    <div class="result-card" id="resultCard"></div>
+    <div class="result-actions">
+      <button class="btn btn-primary" id="sharePosterBtn">🖼 生成分享海报 · Share Poster</button>
+      <button class="btn btn-secondary" id="shareLinkBtn">🔗 复制链接 · Copy Link</button>
+      <button class="btn btn-secondary" id="retakeBtn">🔄 重新测试 · Retake Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- Poster Modal -->
+<div class="poster-overlay" id="posterOverlay">
+  <img id="posterImage" alt="Share Poster" />
+  <p class="poster-hint">👆 长按保存图片，分享到朋友圈</p>
+  <button class="poster-close" id="posterClose">关闭 · Close</button>
+</div>
+
+<!-- Hidden canvas for poster generation -->
+<canvas id="posterCanvas" style="display:none"></canvas>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const characters = [
+  {
+    id: 'little-prince',
+    nameZH: '小王子', nameEN: 'The Little Prince',
+    emoji: '🌹', color: '#f4b642', colorDark: '#d4942b',
+    source: '《小王子》The Little Prince',
+    descZH: '你拥有一颗纯真的心，在复杂的世界里始终守护着最柔软的角落。你的灵魂轻盈而深邃，像一颗孤独却明亮的星球。',
+    descEN: 'You have an innocent heart, always guarding the softest corner in a complex world. Your soul is light yet deep, like a lonely but bright little planet.',
+    traitsZH: ['纯真', '温柔', '好奇', '孤独', '哲思'],
+    traitsEN: ['Innocent', 'Gentle', 'Curious', 'Solitary', 'Philosophical'],
+    quoteZH: '真正重要的东西，用眼睛是看不见的。',
+    quoteEN: 'What is essential is invisible to the eye.',
+    bookZH: '推荐阅读：《小王子》安托万·德·圣-埃克苏佩里',
+    bookEN: 'Read: The Little Prince by Antoine de Saint-Exupéry'
+  },
+  {
+    id: 'hamlet',
+    nameZH: '哈姆雷特', nameEN: 'Hamlet',
+    emoji: '💀', color: '#6b4e71', colorDark: '#4a3550',
+    source: '《哈姆雷特》Hamlet',
+    descZH: '你是一个天生的思考者。在行动之前，你总是反复思量。你的灵魂深处燃烧着对真理的渴望，哪怕前路荆棘。',
+    descEN: 'You are a born thinker. Before acting, you always weigh and ponder. Deep within your soul burns a thirst for truth, no matter how thorny the path.',
+    traitsZH: ['深沉', '哲学', '犹豫', '敏感', '智慧'],
+    traitsEN: ['Profound', 'Philosophical', 'Hesitant', 'Sensitive', 'Wise'],
+    quoteZH: '生存还是毁灭，这是一个问题。',
+    quoteEN: 'To be, or not to be, that is the question.',
+    bookZH: '推荐阅读：《哈姆雷特》威廉·莎士比亚',
+    bookEN: 'Read: Hamlet by William Shakespeare'
+  },
+  {
+    id: 'scarlett',
+    nameZH: '斯嘉丽·奥哈拉', nameEN: 'Scarlett O\'Hara',
+    emoji: '🔥', color: '#c41e3a', colorDark: '#9b1630',
+    source: '《飘》Gone with the Wind',
+    descZH: '你骨子里有一股不死不休的韧劲。天塌下来你也能撑住。你的人生信条是：只要还有一口气，明天就还有希望。',
+    descEN: 'You have an indomitable fighting spirit in your bones. When everything collapses, you hold firm. Your creed: as long as you breathe, tomorrow brings hope.',
+    traitsZH: ['坚韧', '热情', '果断', '务实', '不屈'],
+    traitsEN: ['Resilient', 'Passionate', 'Decisive', 'Pragmatic', 'Indomitable'],
+    quoteZH: '明天又是新的一天。',
+    quoteEN: 'After all, tomorrow is another day.',
+    bookZH: '推荐阅读：《飘》玛格丽特·米切尔',
+    bookEN: 'Read: Gone with the Wind by Margaret Mitchell'
+  },
+  {
+    id: 'holden',
+    nameZH: '霍尔顿·考尔菲德', nameEN: 'Holden Caulfield',
+    emoji: '🎩', color: '#8b6b4a', colorDark: '#6b4f35',
+    source: '《麦田里的守望者》The Catcher in the Rye',
+    descZH: '你厌恶虚伪，渴望真实。在这个充满面具的世界里，你愿意做那个站在悬崖边上、守护纯真的人。',
+    descEN: 'You despise phoniness and crave authenticity. In a world full of masks, you are willing to be the one standing at the edge of the cliff, guarding innocence.',
+    traitsZH: ['叛逆', '敏感', '真诚', '孤独', '守护'],
+    traitsEN: ['Rebellious', 'Sensitive', 'Sincere', 'Lonely', 'Protective'],
+    quoteZH: '我想做一个麦田里的守望者。',
+    quoteEN: 'I\'d just be the catcher in the rye and all.',
+    bookZH: '推荐阅读：《麦田里的守望者》J.D.塞林格',
+    bookEN: 'Read: The Catcher in the Rye by J.D. Salinger'
+  },
+  {
+    id: 'gates',
+    nameZH: '比尔·盖茨', nameEN: 'Bill Gates',
+    emoji: '💻', color: '#0078d4', colorDark: '#005a9e',
+    source: '微软创始人 · Microsoft',
+    descZH: '你用理性丈量世界，用逻辑解决问题。你不满足于理解世界——你想改变它。你的灵魂是一部高效而深远的引擎。',
+    descEN: 'You measure the world with reason and solve problems with logic. You\'re not satisfied with understanding the world — you want to change it. Your soul is an efficient, far-reaching engine.',
+    traitsZH: ['理性', '专注', '创新', '慈善', '远见'],
+    traitsEN: ['Rational', 'Focused', 'Innovative', 'Philanthropic', 'Visionary'],
+    quoteZH: '软件是一种改变世界的力量。',
+    quoteEN: 'Software is a force that can change the world.',
+    bookZH: '推荐阅读：《未来之路》比尔·盖茨',
+    bookEN: 'Read: The Road Ahead by Bill Gates'
+  },
+  {
+    id: 'holmes',
+    nameZH: '夏洛克·福尔摩斯', nameEN: 'Sherlock Holmes',
+    emoji: '🔍', color: '#2f4858', colorDark: '#1e3140',
+    source: '《福尔摩斯探案集》Sherlock Holmes',
+    descZH: '你的大脑从不休息。你观察入微，推理缜密。在混乱中你看到秩序，在沉默中你听见真相。',
+    descEN: 'Your mind never rests. You observe keenly and reason precisely. In chaos you see order; in silence you hear the truth.',
+    traitsZH: ['冷静', '敏锐', '理性', '孤僻', '天才'],
+    traitsEN: ['Calm', 'Sharp', 'Rational', 'Aloof', 'Genius'],
+    quoteZH: '排除一切不可能之后，剩下的无论多么离奇，也必然是真相。',
+    quoteEN: 'When you have eliminated the impossible, whatever remains, however improbable, must be the truth.',
+    bookZH: '推荐阅读：《福尔摩斯探案集》阿瑟·柯南·道尔',
+    bookEN: 'Read: Sherlock Holmes by Arthur Conan Doyle'
+  },
+  {
+    id: 'elizabeth',
+    nameZH: '伊丽莎白·班纳特', nameEN: 'Elizabeth Bennet',
+    emoji: '📖', color: '#6b8e3a', colorDark: '#4d6928',
+    source: '《傲慢与偏见》Pride and Prejudice',
+    descZH: '你聪明幽默，有自己的主见和底线。你不会因为外界的眼光而动摇，宁愿骄傲地独行，也不愿委屈地将就。',
+    descEN: 'You are witty and principled, with a keen mind of your own. You won\'t waver under others\' gaze — you\'d rather walk proudly alone than settle unhappily.',
+    traitsZH: ['聪慧', '独立', '幽默', '有主见', '骄傲'],
+    traitsEN: ['Witty', 'Independent', 'Humorous', 'Principled', 'Proud'],
+    quoteZH: '我的勇气总在需要时迸发。',
+    quoteEN: 'My courage always rises with every attempt to intimidate me.',
+    bookZH: '推荐阅读：《傲慢与偏见》简·奥斯汀',
+    bookEN: 'Read: Pride and Prejudice by Jane Austen'
+  },
+  {
+    id: 'gatsby',
+    nameZH: '杰伊·盖茨比', nameEN: 'Jay Gatsby',
+    emoji: '🥂', color: '#c9a84c', colorDark: '#a08632',
+    source: '《了不起的盖茨比》The Great Gatsby',
+    descZH: '你是一个无可救药的浪漫主义者。为了心中的那盏绿灯，你可以付出一切。你的灵魂华丽而孤独，用整个生命去追逐一个梦。',
+    descEN: 'You are an incurable romantic. For that green light in your heart, you\'d give everything. Your soul is magnificent yet lonely, spending a lifetime chasing a dream.',
+    traitsZH: ['浪漫', '执着', '理想主义', '深情', '孤独'],
+    traitsEN: ['Romantic', 'Determined', 'Idealistic', 'Devoted', 'Lonely'],
+    quoteZH: '于是我们奋力前行，逆水行舟，被不断地推回过去。',
+    quoteEN: 'So we beat on, boats against the current, borne back ceaselessly into the past.',
+    bookZH: '推荐阅读：《了不起的盖茨比》F·斯科特·菲茨杰拉德',
+    bookEN: 'Read: The Great Gatsby by F. Scott Fitzgerald'
+  },
+  {
+    id: 'harry',
+    nameZH: '哈利·波特', nameEN: 'Harry Potter',
+    emoji: '⚡', color: '#8b0000', colorDark: '#5c0000',
+    source: '《哈利·波特》Harry Potter',
+    descZH: '你勇敢、忠诚、为了朋友可以赴汤蹈火。你的灵魂里住着一个战士——不是因为喜欢战斗，而是因为身后有想保护的人。',
+    descEN: 'You are brave and loyal, willing to go through fire for your friends. A warrior lives in your soul — not because you love battle, but because there are people behind you worth protecting.',
+    traitsZH: ['勇敢', '忠诚', '正义', '重情义', '冲动'],
+    traitsEN: ['Brave', 'Loyal', 'Just', 'Devoted', 'Impulsive'],
+    quoteZH: '决定我们是谁的，不是我们的能力，而是我们的选择。',
+    quoteEN: 'It is our choices that show what we truly are, far more than our abilities.',
+    bookZH: '推荐阅读：《哈利·波特》J.K.罗琳',
+    bookEN: 'Read: Harry Potter by J.K. Rowling'
+  },
+  {
+    id: 'quixote',
+    nameZH: '堂吉诃德', nameEN: 'Don Quixote',
+    emoji: '🌬️', color: '#cd853f', colorDark: '#a66a2e',
+    source: '《堂吉诃德》Don Quixote',
+    descZH: '你活在自己的理想国里，不在乎世人的嘲笑。你向风车冲锋，为梦想而战。这个世界需要更多的「疯子」——比如你。',
+    descEN: 'You live in your own ideal kingdom, indifferent to the world\'s laughter. You charge at windmills and fight for dreams. The world needs more "madmen" — like you.',
+    traitsZH: ['理想主义', '勇敢', '疯狂', '善良', '不切实际'],
+    traitsEN: ['Idealistic', 'Courageous', 'Quixotic', 'Kind', 'Unrealistic'],
+    quoteZH: '事实会证明一切。',
+    quoteEN: 'Facts are the enemy of truth.',
+    bookZH: '推荐阅读：《堂吉诃德》米格尔·德·塞万提斯',
+    bookEN: 'Read: Don Quixote by Miguel de Cervantes'
+  },
+  {
+    id: 'jobs',
+    nameZH: '史蒂夫·乔布斯', nameEN: 'Steve Jobs',
+    emoji: '🍎', color: '#333333', colorDark: '#1a1a1a',
+    source: '苹果公司 · Apple Inc.',
+    descZH: '你信仰「不同凡想」。你偏执地追求完美，不愿被规则束缚。你的灵魂是一个颠覆者——世界会因为你而变得不一样。',
+    descEN: 'You believe in "Think Different." You obsessively pursue perfection and refuse to be bound by rules. Your soul is a disruptor — the world will be different because of you.',
+    traitsZH: ['创新', '偏执', '完美主义', '远见', '叛逆'],
+    traitsEN: ['Innovative', 'Obsessive', 'Perfectionist', 'Visionary', 'Rebellious'],
+    quoteZH: 'Stay hungry, stay foolish.',
+    quoteEN: 'Stay hungry, stay foolish.',
+    bookZH: '推荐阅读：《史蒂夫·乔布斯传》沃尔特·艾萨克森',
+    bookEN: 'Read: Steve Jobs by Walter Isaacson'
+  },
+  {
+    id: 'wukong',
+    nameZH: '孙悟空', nameEN: 'Sun Wukong',
+    emoji: '🐵', color: '#ff6b35', colorDark: '#d4521e',
+    source: '《西游记》Journey to the West',
+    descZH: '你生来自由，不愿被任何枷锁束缚。你强大、叛逆、却也重情重义。你的灵魂是一只不羁的猴子——上天入地，只为做自己。',
+    descEN: 'You were born free, unwilling to be shackled by anything. You are powerful, rebellious, yet deeply loyal. Your soul is an untamed monkey — crossing heaven and earth just to be yourself.',
+    traitsZH: ['自由', '强大', '叛逆', '忠诚', '幽默'],
+    traitsEN: ['Free', 'Powerful', 'Rebellious', 'Loyal', 'Witty'],
+    quoteZH: '俺老孙来也！',
+    quoteEN: 'Here comes Old Sun!',
+    bookZH: '推荐阅读：《西游记》吴承恩',
+    bookEN: 'Read: Journey to the West by Wu Cheng\'en'
+  }
+];
+
+const questions = [
+  {
+    id: 'q1',
+    textZH: '周末的午后，你最喜欢做什么？',
+    textEN: 'On a weekend afternoon, what do you most enjoy?',
+    options: [
+      { letter: 'A', textZH: '一个人安静地看书或思考', textEN: 'Read or think quietly alone',
+        scores: { hamlet: 3, holmes: 2, 'little-prince': 2 } },
+      { letter: 'B', textZH: '约朋友聚会，热闹地度过', textEN: 'Gather with friends and have fun',
+        scores: { harry: 3, wukong: 2, scarlett: 2 } },
+      { letter: 'C', textZH: '研究一个新项目，学点新东西', textEN: 'Work on a new project, learn something new',
+        scores: { gates: 3, jobs: 2, holmes: 2 } },
+      { letter: 'D', textZH: '出门探索，去没去过的地方', textEN: 'Go out and explore somewhere new',
+        scores: { quixote: 3, wukong: 2, holden: 1 } }
+    ]
+  },
+  {
+    id: 'q2',
+    textZH: '面对人生的重大选择，你通常怎么决定？',
+    textEN: 'When facing a major life decision, how do you decide?',
+    options: [
+      { letter: 'A', textZH: '列出优缺点，理性分析', textEN: 'List pros and cons, analyze rationally',
+        scores: { holmes: 3, gates: 2, elizabeth: 2 } },
+      { letter: 'B', textZH: '听从内心的声音，跟着感觉走', textEN: 'Follow my heart and intuition',
+        scores: { gatsby: 3, scarlett: 2, quixote: 1 } },
+      { letter: 'C', textZH: '征求信任的人的意见', textEN: 'Ask trusted people for advice',
+        scores: { harry: 3, elizabeth: 2, 'little-prince': 1 } },
+      { letter: 'D', textZH: '坚持自己，哪怕所有人反对', textEN: 'Stick to my choice, even if everyone disagrees',
+        scores: { jobs: 3, holden: 2, wukong: 1 } }
+    ]
+  },
+  {
+    id: 'q3',
+    textZH: '朋友眼中的你是什么样的？',
+    textEN: 'How would your friends describe you?',
+    options: [
+      { letter: 'A', textZH: '聪明冷静，总能给出好建议', textEN: 'Smart and calm, always gives good advice',
+        scores: { holmes: 3, elizabeth: 2, gates: 2 } },
+      { letter: 'B', textZH: '热情似火，永远充满能量', textEN: 'Passionate and full of energy',
+        scores: { scarlett: 3, wukong: 2, harry: 2 } },
+      { letter: 'C', textZH: '温柔细腻，内心世界丰富', textEN: 'Gentle and sensitive, with a rich inner world',
+        scores: { 'little-prince': 3, holden: 2, gatsby: 2 } },
+      { letter: 'D', textZH: '独特另类，活在自己的节奏里', textEN: 'Unique and marches to their own beat',
+        scores: { hamlet: 3, jobs: 2, quixote: 1 } }
+    ]
+  },
+  {
+    id: 'q4',
+    textZH: '你最看重的是什么？',
+    textEN: 'What do you value most?',
+    options: [
+      { letter: 'A', textZH: '真理与智慧', textEN: 'Truth and wisdom',
+        scores: { holmes: 3, gates: 2, hamlet: 2 } },
+      { letter: 'B', textZH: '爱与被爱的能力', textEN: 'The ability to love and be loved',
+        scores: { gatsby: 3, 'little-prince': 2, harry: 2 } },
+      { letter: 'C', textZH: '自由与冒险', textEN: 'Freedom and adventure',
+        scores: { wukong: 3, quixote: 2, holden: 2 } },
+      { letter: 'D', textZH: '成就与影响力', textEN: 'Achievement and influence',
+        scores: { jobs: 3, scarlett: 2, elizabeth: 1 } }
+    ]
+  },
+  {
+    id: 'q5',
+    textZH: '如果要选一种"超能力"，你希望是？',
+    textEN: 'If you could choose a "superpower", it would be...',
+    options: [
+      { letter: 'A', textZH: '超强逻辑——能看穿一切问题', textEN: 'Hyper-logic — see through any problem',
+        scores: { holmes: 3, gates: 2, hamlet: 1 } },
+      { letter: 'B', textZH: '燃烧不灭的热情——永不放弃', textEN: 'Unquenchable passion — never give up',
+        scores: { scarlett: 3, wukong: 2, quixote: 1 } },
+      { letter: 'C', textZH: '治愈他人——让人感到安心和温暖', textEN: 'Healing — make others feel safe and warm',
+        scores: { 'little-prince': 3, harry: 2, gatsby: 1 } },
+      { letter: 'D', textZH: '看穿虚伪——一眼识破谎言和伪装', textEN: 'Truth sight — instantly see through lies and masks',
+        scores: { holden: 3, hamlet: 2, elizabeth: 1 } }
+    ]
+  },
+  {
+    id: 'q6',
+    textZH: '什么最容易让你愤怒？',
+    textEN: 'What angers you most easily?',
+    options: [
+      { letter: 'A', textZH: '愚蠢和不讲逻辑', textEN: 'Stupidity and illogic',
+        scores: { holmes: 3, gates: 2, elizabeth: 1 } },
+      { letter: 'B', textZH: '虚伪和装模作样', textEN: 'Hypocrisy and pretense',
+        scores: { holden: 3, hamlet: 2, wukong: 1 } },
+      { letter: 'C', textZH: '不公平和不正义', textEN: 'Injustice and unfairness',
+        scores: { harry: 3, scarlett: 2, quixote: 1 } },
+      { letter: 'D', textZH: '被束缚、被限制自由和创造力', textEN: 'Being restrained — limits on freedom and creativity',
+        scores: { jobs: 3, wukong: 2, 'little-prince': 1 } }
+    ]
+  },
+  {
+    id: 'q7',
+    textZH: '你理想中的关系是？',
+    textEN: 'Your ideal relationship is...',
+    options: [
+      { letter: 'A', textZH: '灵魂深处的共鸣与对话', textEN: 'Deep soul resonance and conversation',
+        scores: { hamlet: 3, elizabeth: 2, 'little-prince': 2 } },
+      { letter: 'B', textZH: '轰轰烈烈，爱得热烈而灿烂', textEN: 'Passionate and brilliantly intense',
+        scores: { scarlett: 3, gatsby: 2, wukong: 1 } },
+      { letter: 'C', textZH: '忠诚陪伴，不离不弃的温暖', textEN: 'Loyal companionship, warm and steadfast',
+        scores: { harry: 3, gatsby: 2, 'little-prince': 1 } },
+      { letter: 'D', textZH: '互相欣赏，独立又彼此成就', textEN: 'Mutual admiration, independent yet empowering',
+        scores: { elizabeth: 3, jobs: 2, holmes: 1 } }
+    ]
+  },
+  {
+    id: 'q8',
+    textZH: '如果可以穿越时空，你最想去？',
+    textEN: 'If you could time-travel, where would you go?',
+    options: [
+      { letter: 'A', textZH: '维多利亚时代的伦敦——雾中的智慧之城', textEN: 'Victorian London — city of wisdom in the fog',
+        scores: { holmes: 3, hamlet: 1, elizabeth: 1 } },
+      { letter: 'B', textZH: '咆哮的二十年代——纸醉金迷的爵士时代', textEN: 'The Roaring Twenties — the dazzling Jazz Age',
+        scores: { gatsby: 3, scarlett: 1, holden: 1 } },
+      { letter: 'C', textZH: '未来的硅谷——见证改变世界的创新', textEN: 'Future Silicon Valley — witness world-changing innovation',
+        scores: { jobs: 3, gates: 2, holmes: 1 } },
+      { letter: 'D', textZH: '神话时代的东方——大闹天宫的传奇纪元', textEN: 'Mythical ancient East — the age of legends',
+        scores: { wukong: 3, quixote: 2, harry: 1 } }
+    ]
+  },
+  {
+    id: 'q9',
+    textZH: '你人生的终极目标是？',
+    textEN: 'Your ultimate life goal is...',
+    options: [
+      { letter: 'A', textZH: '理解世界，洞悉万物的真相', textEN: 'Understand the world, grasp the truth of all things',
+        scores: { holmes: 3, hamlet: 2, gates: 1 } },
+      { letter: 'B', textZH: '被记住——在这个世界上留下自己的印记', textEN: 'Be remembered — leave your mark on this world',
+        scores: { scarlett: 3, jobs: 2, gatsby: 1 } },
+      { letter: 'C', textZH: '守护所爱，平安喜乐地过好每一天', textEN: 'Protect those I love, live each day with peace and joy',
+        scores: { harry: 3, 'little-prince': 2, elizabeth: 1 } },
+      { letter: 'D', textZH: '活出真我——不被定义，不设边界', textEN: 'Be truly myself — undefined, unbounded',
+        scores: { wukong: 3, holden: 2, quixote: 1 } }
+    ]
+  },
+  {
+    id: 'q10',
+    textZH: '选一句最让你有共鸣的话：',
+    textEN: 'Pick a quote that resonates most with you:',
+    options: [
+      { letter: 'A', textZH: '"生存还是毁灭，这是一个问题。"', textEN: '"To be, or not to be, that is the question."',
+        scores: { hamlet: 3, holden: 1, holmes: 1 } },
+      { letter: 'B', textZH: '"明天又是新的一天。"', textEN: '"After all, tomorrow is another day."',
+        scores: { scarlett: 3, gatsby: 1, harry: 1 } },
+      { letter: 'C', textZH: '"Stay hungry, stay foolish."', textEN: '"Stay hungry, stay foolish."',
+        scores: { jobs: 3, quixote: 2, wukong: 1 } },
+      { letter: 'D', textZH: '"真正重要的东西，用眼睛是看不见的。"', textEN: '"What is essential is invisible to the eye."',
+        scores: { 'little-prince': 3, elizabeth: 1, gatsby: 1 } }
+    ]
+  }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+
+let lang = 'ZH';            // 'ZH' | 'EN'
+let currentQ = 0;           // 0-9
+let scores = {};            // { characterId: totalScore }
+let resultChar = null;
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function t(zh, en) { return lang === 'ZH' ? zh : en; }
+
+function $id(id) { return document.getElementById(id); }
+
+function resetScores() {
+  scores = {};
+  characters.forEach(c => { scores[c.id] = 0; });
+}
+
+// ============================================================
+// SCREEN SWITCHING
+// ============================================================
+
+function showScreen(name) {
+  ['startScreen', 'quizScreen', 'resultScreen'].forEach(id => {
+    $id(id).classList.remove('active');
+  });
+  const map = { start: 'startScreen', quiz: 'quizScreen', result: 'resultScreen' };
+  $id(map[name]).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// START SCREEN
+// ============================================================
+
+function initStartScreen() {
+  $id('startBtn').addEventListener('click', startQuiz);
+}
+
+function startQuiz() {
+  resetScores();
+  currentQ = 0;
+  resultChar = null;
+  renderQuestion();
+  showScreen('quiz');
+}
+
+// ============================================================
+// QUIZ SCREEN
+// ============================================================
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  $id('questionNumber').textContent =
+    t('QUESTION', 'QUESTION') + ' ' + (currentQ + 1);
+  $id('questionText').textContent = t(q.textZH, q.textEN);
+  $id('progressLabel').textContent =
+    t(`第 ${currentQ + 1} 题 / 共 10 题`, `Question ${currentQ + 1} of 10`);
+  $id('progressPct').textContent = Math.round((currentQ / 10) * 100) + '%';
+  $id('progressFill').style.width = ((currentQ / 10) * 100) + '%';
+
+  const container = $id('optionsContainer');
+  container.innerHTML = '';
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-card';
+    btn.innerHTML = `
+      <span class="option-letter">${opt.letter}</span>
+      <span>${t(opt.textZH, opt.textEN)}</span>
+    `;
+    btn.addEventListener('click', () => selectOption(idx));
+    container.appendChild(btn);
+  });
+}
+
+function selectOption(optIdx) {
+  const q = questions[currentQ];
+  const chosen = q.options[optIdx];
+
+  // Add scores
+  Object.entries(chosen.scores).forEach(([charId, pts]) => {
+    scores[charId] = (scores[charId] || 0) + pts;
+  });
+
+  currentQ++;
+
+  if (currentQ >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+    $id('progressFill').style.width = ((currentQ / 10) * 100) + '%';
+    $id('progressPct').textContent = Math.round((currentQ / 10) * 100) + '%';
+    $id('progressLabel').textContent =
+      t(`第 ${currentQ + 1} 题 / 共 10 题`, `Question ${currentQ + 1} of 10`);
+  }
+}
+
+// ============================================================
+// RESULT SCREEN
+// ============================================================
+
+function showResult() {
+  $id('progressFill').style.width = '100%';
+  $id('progressPct').textContent = '100%';
+
+  // Find top character
+  let bestId = null, bestScore = -1;
+  Object.entries(scores).forEach(([id, s]) => {
+    if (s > bestScore) { bestScore = s; bestId = id; }
+  });
+
+  resultChar = characters.find(c => c.id === bestId);
+
+  // Calculate match percentage
+  const maxPossible = Object.values(scores).reduce((a, b) => a + b, 0);
+  const pct = maxPossible > 0 ? Math.round((bestScore / maxPossible) * 100) : 50;
+  // Clamp between 60-98 for presentation
+  const displayPct = Math.min(98, Math.max(60, pct + 30));
+
+  // Render result card
+  const card = $id('resultCard');
+  card.innerHTML = `
+    <div class="result-header" style="background:linear-gradient(135deg, ${resultChar.color} 0%, ${resultChar.colorDark} 100%)">
+      <span class="result-emoji">${resultChar.emoji}</span>
+      <div class="result-name-zh">${resultChar.nameZH}</div>
+      <div class="result-name-en">${resultChar.nameEN}</div>
+      <div class="result-match">
+        <span class="pct">${displayPct}%</span> ${t('匹配', 'Match')}
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="result-section">
+        <div class="result-label">${t('📖 来源', '📖 Source')}</div>
+        <div class="result-desc">${resultChar.source}</div>
+      </div>
+      <div class="result-section">
+        <div class="result-label">${t('💬 灵魂共鸣', '💬 Soul Resonance')}</div>
+        <div class="result-desc">${t(resultChar.descZH, resultChar.descEN)}</div>
+      </div>
+      <div class="result-section">
+        <div class="result-label">${t('🏷 性格标签', '🏷 Traits')}</div>
+        <div class="result-traits">
+          ${t(resultChar.traitsZH, resultChar.traitsEN).map(tr =>
+            `<span class="trait-tag">${tr}</span>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="result-section">
+        <div class="result-label">${t('✨ 灵魂金句', '✨ Signature Quote')}</div>
+        <div class="result-quote">${t(resultChar.quoteZH, resultChar.quoteEN)}</div>
+      </div>
+      <div class="result-section">
+        <div class="result-label">${t('📚 推荐阅读', '📚 Recommended Read')}</div>
+        <div class="result-book">
+          <span class="book-icon">📚</span>
+          <span>${t(resultChar.bookZH, resultChar.bookEN)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  showScreen('result');
+}
+
+// ============================================================
+// SHARE POSTER (Canvas)
+// ============================================================
+
+function generatePoster() {
+  if (!resultChar) return;
+
+  const canvas = $id('posterCanvas');
+  const W = 750;
+  const H = 1200;
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // Background gradient
+  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+  bgGrad.addColorStop(0, '#ffd89b');
+  bgGrad.addColorStop(0.35, '#f5a3b7');
+  bgGrad.addColorStop(0.7, '#c9a7d4');
+  bgGrad.addColorStop(1, '#a8c8f0');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // White card
+  const cardX = 40, cardY = 80, cardW = W - 80, cardH = H - 160;
+  ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = 'rgba(0,0,0,0.12)';
+  ctx.shadowBlur = 40;
+  ctx.shadowOffsetY = 8;
+  roundRect(ctx, cardX, cardY, cardW, cardH, 24);
+  ctx.fill();
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetY = 0;
+
+  // Header strip
+  const headerH = 280;
+  const headerGrad = ctx.createLinearGradient(0, cardY, 0, cardY + headerH);
+  headerGrad.addColorStop(0, resultChar.color);
+  headerGrad.addColorStop(1, resultChar.colorDark);
+  ctx.fillStyle = headerGrad;
+  ctx.beginPath();
+  ctx.moveTo(cardX + 24, cardY);
+  ctx.lineTo(cardX + cardW - 24, cardY);
+  ctx.lineTo(cardX + cardW, cardY + headerH);
+  ctx.lineTo(cardX, cardY + headerH);
+  ctx.closePath();
+  ctx.fill();
+
+  // Clip header to card top
+  ctx.save();
+  ctx.beginPath();
+  roundRect(ctx, cardX, cardY, cardW, cardH, 24);
+  ctx.clip();
+  ctx.fillStyle = headerGrad;
+  ctx.fillRect(cardX, cardY, cardW, headerH);
+  ctx.restore();
+
+  // Emoji
+  ctx.font = '100px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(resultChar.emoji, W / 2, cardY + 120);
+
+  // Name ZH
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 48px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(resultChar.nameZH, W / 2, cardY + 200);
+
+  // Name EN
+  ctx.font = '20px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fillText(resultChar.nameEN, W / 2, cardY + 235);
+
+  // Match percentage
+  const pct = Math.min(98, Math.max(60,
+    Math.round((scores[resultChar.id] / Object.values(scores).reduce((a, b) => a + b, 0)) * 100) + 30
+  ));
+  ctx.font = 'bold 80px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(pct + '%', W / 2, cardY + headerH - 20);
+
+  // Body text
+  const bodyY = cardY + headerH + 50;
+  ctx.fillStyle = '#636e72';
+  ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(lang === 'ZH' ? '灵魂共鸣度' : 'Soul Match', W / 2, bodyY);
+
+  // Description
+  const desc = lang === 'ZH' ? resultChar.descZH : resultChar.descEN;
+  ctx.fillStyle = '#2d3436';
+  ctx.font = '18px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
+  ctx.textAlign = 'center';
+  wrapText(ctx, desc, W / 2, bodyY + 50, cardW - 80, 32);
+
+  // Quote
+  const quoteY = bodyY + 200;
+  ctx.fillStyle = '#ff9a56';
+  ctx.fillRect(cardX + 40, quoteY - 8, 4, 60);
+  ctx.fillStyle = '#2d3436';
+  ctx.font = 'italic 20px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",serif';
+  ctx.textAlign = 'left';
+  wrapText(ctx, '"' + (lang === 'ZH' ? resultChar.quoteZH : resultChar.quoteEN) + '"',
+    cardX + 64, quoteY + 10, cardW - 120, 30);
+
+  // Footer
+  const footerY = cardY + cardH - 80;
+  ctx.fillStyle = '#b2bec3';
+  ctx.font = '16px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(lang === 'ZH' ? '你与哪位不朽的主角共享灵魂？' : 'Which immortal protagonist shares your soul?',
+    W / 2, footerY);
+  ctx.fillStyle = '#c9a7d4';
+  ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.fillText(lang === 'ZH' ? '扫码来测 →' : 'Scan to take the quiz →',
+    W / 2, footerY + 28);
+
+  // Return data URL
+  return canvas.toDataURL('image/png', 0.92);
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const chars = text.split('');
+  let line = '';
+  let currentY = y;
+  for (let i = 0; i < chars.length; i++) {
+    const testLine = line + chars[i];
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && line.length > 0) {
+      ctx.fillText(line, x, currentY);
+      line = chars[i];
+      currentY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  if (line.length > 0) {
+    ctx.fillText(line, x, currentY);
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+function showPoster() {
+  const dataUrl = generatePoster();
+  $id('posterImage').src = dataUrl;
+  $id('posterOverlay').classList.add('show');
+}
+
+function hidePoster() {
+  $id('posterOverlay').classList.remove('show');
+}
+
+// ============================================================
+// SHARE LINK
+// ============================================================
+
+async function shareLink() {
+  const title = t(
+    '你与哪位不朽的主角共享灵魂？',
+    'Which immortal protagonist shares your soul?'
+  );
+  const text = t(
+    `我的灵魂与「${resultChar.nameZH}」共鸣最深！来测测你的灵魂伴侣是谁 →`,
+    `My soul resonates most with "${resultChar.nameEN}"! Find your soul match →`
+  );
+  const url = window.location.href;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text, url });
+    } catch (e) {
+      copyLink(text, url);
+    }
+  } else {
+    copyLink(text, url);
+  }
+}
+
+function copyLink(text, url) {
+  const copyStr = text + ' ' + url;
+  navigator.clipboard.writeText(copyStr).then(() => {
+    alert(t('✅ 链接已复制！去粘贴分享吧～', '✅ Link copied! Paste to share~'));
+  }).catch(() => {
+    prompt(t('手动复制以下内容分享：', 'Copy manually:'), copyStr);
+  });
+}
+
+// ============================================================
+// RETRY
+// ============================================================
+
+function retakeQuiz() {
+  resetScores();
+  currentQ = 0;
+  resultChar = null;
+  showScreen('start');
+}
+
+// ============================================================
+// LANGUAGE
+// ============================================================
+
+function toggleLang() {
+  lang = lang === 'ZH' ? 'EN' : 'ZH';
+  $id('langToggle').textContent = lang === 'ZH' ? 'EN' : '中';
+
+  // Re-render current screen
+  if ($id('quizScreen').classList.contains('active')) {
+    renderQuestion();
+  } else if ($id('resultScreen').classList.contains('active') && resultChar) {
+    showResult();
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+
+function init() {
+  initStartScreen();
+
+  $id('langToggle').addEventListener('click', toggleLang);
+  $id('sharePosterBtn').addEventListener('click', showPoster);
+  $id('shareLinkBtn').addEventListener('click', shareLink);
+  $id('retakeBtn').addEventListener('click', retakeQuiz);
+  $id('posterClose').addEventListener('click', hidePoster);
+  $id('posterOverlay').addEventListener('click', function(e) {
+    if (e.target === this) hidePoster();
+  });
+
+  resetScores();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
