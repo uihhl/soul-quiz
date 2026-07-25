@@ -1199,11 +1199,11 @@ function loadLocalImage(path) {
   });
 }
 
-async function generatePoster() {
+function generatePoster() {
   if (!resultChar) return;
 
   const canvas = $id('posterCanvas');
-  const W = 750, H = 1500;
+  const W = 750, H = 1200;
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
@@ -1363,57 +1363,8 @@ async function generatePoster() {
   ctx.fillText('📚  ' + bookText, pad + 14, y + 22);
   y += 50;
 
-  // 6) 二维码区域
-  y += 4;
-  const qrSize = 140;
-  const qrY = y;
-  const leftQRCenter = W / 2 - 100;
-  const rightQRCenter = W / 2 + 100;
-
-  // 加载本地二维码（超时或失败则显示占位框）
-  const [xhsQR, reviewQR] = await Promise.all([
-    loadLocalImage(XHS_QR_PATH),
-    loadLocalImage(REVIEW_QR_PATH)
-  ]);
-
-  function drawQRPlaceholder(cx, cy, label) {
-    ctx.strokeStyle = '#e0e0e0';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([6, 4]);
-    roundRect(ctx, cx - qrSize/2, cy, qrSize, qrSize, 12);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = '#b2bec3';
-    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(label, cx, cy + qrSize/2 + 4);
-  }
-
-  // 左：小红书
-  if (xhsQR) {
-    ctx.drawImage(xhsQR, leftQRCenter - qrSize/2, qrY, qrSize, qrSize);
-  } else {
-    drawQRPlaceholder(leftQRCenter, qrY, '小红书');
-  }
-  ctx.fillStyle = '#636e72';
-  ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(isZH ? '关注小红书' : 'Follow on RED', leftQRCenter, qrY + qrSize + 20);
-
-  // 右：好评
-  if (reviewQR) {
-    ctx.drawImage(reviewQR, rightQRCenter - qrSize/2, qrY, qrSize, qrSize);
-  } else {
-    drawQRPlaceholder(rightQRCenter, qrY, '好评');
-  }
-  ctx.fillStyle = '#636e72';
-  ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
-  ctx.fillText(isZH ? '扫码给个好评' : 'Leave a review', rightQRCenter, qrY + qrSize + 20);
-
-  y = qrY + qrSize + 40;
-
-  // ── 底部 ──
-  y += 10;
+  // ── 底部水印 ──
+  y += 20;
   ctx.fillStyle = '#b2bec3';
   ctx.font = '16px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.textAlign = 'center';
@@ -1421,10 +1372,10 @@ async function generatePoster() {
     isZH ? '你与哪位不朽的主角共享灵魂？' : 'Which immortal protagonist shares your soul?',
     W / 2, y
   );
-  y += 26;
+  y += 30;
   ctx.fillStyle = '#c9a7d4';
-  ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
-  ctx.fillText(isZH ? '扫码来测，找到你的灵魂共鸣 →' : 'Scan to find your soul match →', W / 2, y);
+  ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.fillText('小红书 自我说明书l71', W / 2, y);
 
   return canvas.toDataURL('image/png', 0.92);
 }
@@ -1448,7 +1399,7 @@ function wrapLines(ctx, text, maxWidth) {
 
 async function showPoster() {
   try {
-    const dataUrl = await generatePoster();
+    const dataUrl = generatePoster();
     $id('posterImage').src = dataUrl;
     $id('posterOverlay').classList.add('show');
   } catch (e) {
