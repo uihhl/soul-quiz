@@ -1682,14 +1682,6 @@ function generatePoster() {
   ctx.fillStyle = 'rgba(255,255,255,0.8)';
   ctx.fillText(resultChar.nameEN, W / 2, cardY + 196);
 
-  // 匹配度
-  const pct = Math.min(98, Math.max(60,
-    Math.round((scores[resultChar.id] / Object.values(scores).reduce((a, b) => a + b, 0)) * 100) + 30
-  ));
-  ctx.font = 'bold 42px "PingFang SC","Microsoft YaHei",sans-serif';
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText(pct + '%', W / 2, cardY + 250);
-
   // ── 正文区域 ──
   const pad = cardX + 24;
   const contentW = cardW - 48;
