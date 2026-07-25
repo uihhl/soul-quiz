@@ -978,18 +978,17 @@ function showResult() {
 // SHARE POSTER (Canvas) — 完整版：角色信息 + 性格标签 + 金句 + 推荐阅读 + 二维码 + 水印
 // ============================================================
 
-// TODO: 替换为你的实际链接
-const XHS_URL = 'https://www.xiaohongshu.com/user/profile/你的小红书ID';
-const REVIEW_URL = 'https://你的好评链接';
+// 二维码图片（本地文件）
+const XHS_QR_PATH = 'xhs-qr.png';
+const REVIEW_QR_PATH = 'review-qr.png';
 
-function loadQR(url) {
+function loadLocalImage(path) {
   return new Promise((resolve) => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
-    const timer = setTimeout(() => resolve(null), 4000);
+    const timer = setTimeout(() => resolve(null), 5000);
     img.onload = () => { clearTimeout(timer); resolve(img); };
     img.onerror = () => { clearTimeout(timer); resolve(null); };
-    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(url);
+    img.src = path;
   });
 }
 
@@ -1164,10 +1163,10 @@ async function generatePoster() {
   const leftQRCenter = W / 2 - 100;
   const rightQRCenter = W / 2 + 100;
 
-  // 加载二维码（超时或失败则显示占位框）
+  // 加载本地二维码（超时或失败则显示占位框）
   const [xhsQR, reviewQR] = await Promise.all([
-    loadQR(XHS_URL),
-    loadQR(REVIEW_URL)
+    loadLocalImage(XHS_QR_PATH),
+    loadLocalImage(REVIEW_QR_PATH)
   ]);
 
   function drawQRPlaceholder(cx, cy, label) {
