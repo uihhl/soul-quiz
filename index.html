@@ -1450,11 +1450,6 @@ function initStartScreen() {
 }
 
 function startQuiz() {
-  // 检查是否已通过邀请码验证
-  if (localStorage.getItem('sq_invite_verified')) {
-    skipInviteAndStart();
-    return;
-  }
   showScreen('invite');
   $id('inviteInput').value = '';
   $id('inviteError').textContent = '';
@@ -1548,9 +1543,6 @@ function showResult() {
       <span class="result-emoji">${resultChar.emoji}</span>
       <div class="result-name-zh">${resultChar.nameZH}</div>
       <div class="result-name-en">${resultChar.nameEN}</div>
-      <div class="result-match">
-        <span class="pct">${displayPct}%</span> ${t('匹配', 'Match')}
-      </div>
     </div>
     <div class="result-body">
       <div class="result-section">
@@ -1623,7 +1615,7 @@ function generatePoster() {
   if (!resultChar) return;
 
   const canvas = $id('posterCanvas');
-  const W = 500, H = 1000;
+  const W = 500, H = 1080;
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
@@ -1701,7 +1693,7 @@ function generatePoster() {
   // ── 正文区域 ──
   const pad = cardX + 24;
   const contentW = cardW - 48;
-  let y = cardY + headerH + 24;
+  let y = cardY + headerH + 30;
   const isZH = lang === 'ZH';
 
   function drawLabel(text) {
@@ -1709,7 +1701,7 @@ function generatePoster() {
     ctx.font = 'bold 12px "PingFang SC","Microsoft YaHei",sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText(text, pad, y);
-    y += 18;
+    y += 22;
   }
 
   function drawBody(text, fontSize, lineH, color) {
@@ -1719,19 +1711,19 @@ function generatePoster() {
     const lines = wrapLines(ctx, text, contentW);
     lines.forEach(line => {
       ctx.fillText(line, pad, y);
-      y += lineH || 24;
+      y += lineH || 26;
     });
   }
 
   // 1) 灵魂共鸣
   drawLabel(isZH ? '💬 灵魂共鸣' : '💬 Soul Resonance');
-  drawBody(isZH ? resultChar.descZH : resultChar.descEN, 15, 24);
-  y += 12;
+  drawBody(isZH ? resultChar.descZH : resultChar.descEN, 15, 26);
+  y += 18;
 
   // 2) 来源
   drawLabel(isZH ? '📖 来源' : '📖 Source');
-  drawBody(resultChar.source, 14, 22, '#636e72');
-  y += 12;
+  drawBody(resultChar.source, 14, 24, '#636e72');
+  y += 18;
 
   // 3) 性格标签
   drawLabel(isZH ? '🏷 性格标签' : '🏷 Traits');
@@ -1742,7 +1734,7 @@ function generatePoster() {
     const tagW = ctx.measureText(tag).width + 24;
     if (tagX + tagW > pad + contentW) {
       tagX = pad;
-      y += 32;
+      y += 36;
     }
     ctx.fillStyle = '#f8f9fa';
     roundRect(ctx, tagX, y - 12, tagW, 28, 14);
@@ -1753,38 +1745,38 @@ function generatePoster() {
     ctx.fillText(tag, tagX + 12, y + 4);
     tagX += tagW + 8;
   });
-  y = Math.max(y + 22, tagStartY + 38);
-  y += 8;
+  y = Math.max(y + 26, tagStartY + 42);
+  y += 14;
 
   // 4) 灵魂金句
   drawLabel(isZH ? '✨ 灵魂金句' : '✨ Signature Quote');
   const quote = isZH ? resultChar.quoteZH : resultChar.quoteEN;
   ctx.fillStyle = '#fdf6f0';
-  roundRect(ctx, pad, y - 2, contentW, 50, 10);
+  roundRect(ctx, pad, y - 2, contentW, 52, 10);
   ctx.fill();
   ctx.fillStyle = '#ff9a56';
-  ctx.fillRect(pad + 4, y + 6, 3, 26);
+  ctx.fillRect(pad + 4, y + 6, 3, 28);
   ctx.fillStyle = '#2d3436';
   ctx.font = 'italic 15px "PingFang SC","Georgia",serif';
   ctx.textAlign = 'left';
-  ctx.fillText('"' + quote + '"', pad + 15, y + 28);
-  y += 58;
-  y += 10;
+  ctx.fillText('"' + quote + '"', pad + 15, y + 30);
+  y += 62;
+  y += 16;
 
   // 5) 推荐阅读
   drawLabel(isZH ? '📚 推荐阅读' : '📚 Recommended Read');
   ctx.fillStyle = '#f8f9fa';
-  roundRect(ctx, pad, y - 2, contentW, 36, 10);
+  roundRect(ctx, pad, y - 2, contentW, 38, 10);
   ctx.fill();
   ctx.fillStyle = '#2d3436';
   ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.textAlign = 'left';
   const bookText = isZH ? resultChar.bookZH : resultChar.bookEN;
-  ctx.fillText('📚  ' + bookText, pad + 14, y + 24);
+  ctx.fillText('📚  ' + bookText, pad + 14, y + 26);
   y += 44;
 
   // ── 底部水印 ──
-  y += 20;
+  y += 28;
   ctx.fillStyle = '#b2bec3';
   ctx.font = '15px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.textAlign = 'center';
@@ -1792,7 +1784,7 @@ function generatePoster() {
     isZH ? '你与哪位不朽的主角共享灵魂？' : 'Which immortal protagonist shares your soul?',
     W / 2, y
   );
-  y += 26;
+  y += 28;
   ctx.fillStyle = '#c9a7d4';
   ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.fillText('小红书 自我说明书l71', W / 2, y);
