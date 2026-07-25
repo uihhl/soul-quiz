@@ -42,7 +42,7 @@ body {
   background-attachment: fixed;
   min-height: 100dvh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 16px;
   padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
@@ -109,7 +109,7 @@ body {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ===== Start Screen ===== */
-.start-screen { text-align: center; padding-top: 40px; }
+.start-screen { text-align: center; padding-top: 60px; }
 
 .start-icon {
   font-size: 72px;
@@ -196,6 +196,7 @@ body {
   width: 100%;
   margin-bottom: 28px;
 }
+.quiz-screen { padding-top: 40px; }
 .progress-info {
   display: flex;
   justify-content: space-between;
