@@ -461,7 +461,6 @@ body {
     <div class="result-card" id="resultCard"></div>
     <div class="result-actions">
       <button class="btn btn-primary" id="sharePosterBtn">🖼 生成分享海报 · Share Poster</button>
-      <button class="btn btn-secondary" id="shareLinkBtn">🔗 复制链接 · Copy Link</button>
       <button class="btn btn-secondary" id="retakeBtn">🔄 重新测试 · Retake Quiz</button>
     </div>
   </div>
@@ -976,30 +975,57 @@ function showResult() {
 }
 
 // ============================================================
-// SHARE POSTER (Canvas)
+// SHARE POSTER (Canvas) — 完整版：角色信息 + 性格标签 + 金句 + 推荐阅读 + 二维码 + 水印
 // ============================================================
 
-function generatePoster() {
+// TODO: 替换为你的实际链接
+const XHS_URL = 'https://www.xiaohongshu.com/user/profile/你的小红书ID';
+const REVIEW_URL = 'https://你的好评链接';
+
+function loadQR(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    const timer = setTimeout(() => resolve(null), 4000);
+    img.onload = () => { clearTimeout(timer); resolve(img); };
+    img.onerror = () => { clearTimeout(timer); resolve(null); };
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(url);
+  });
+}
+
+async function generatePoster() {
   if (!resultChar) return;
 
   const canvas = $id('posterCanvas');
-  const W = 750;
-  const H = 1200;
+  const W = 750, H = 1500;
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  // Background gradient
+  // ── 背景渐变 ──
   const bgGrad = ctx.createLinearGradient(0, 0, W, H);
   bgGrad.addColorStop(0, '#ffd89b');
-  bgGrad.addColorStop(0.35, '#f5a3b7');
-  bgGrad.addColorStop(0.7, '#c9a7d4');
+  bgGrad.addColorStop(0.3, '#f5a3b7');
+  bgGrad.addColorStop(0.65, '#c9a7d4');
   bgGrad.addColorStop(1, '#a8c8f0');
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, W, H);
 
-  // White card
-  const cardX = 40, cardY = 80, cardW = W - 80, cardH = H - 160;
+  // ── 水印（斜排半透明文字） ──
+  ctx.save();
+  ctx.globalAlpha = 0.06;
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 60px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'center';
+  for (let row = -2; row < 6; row++) {
+    for (let col = -2; col < 6; col++) {
+      ctx.fillText('灵魂匹配 · Soul Match', W / 2 + col * 350, H / 2 + row * 180);
+    }
+  }
+  ctx.restore();
+
+  // ── 白色卡片 ──
+  const cardX = 40, cardY = 50, cardW = W - 80, cardH = H - 100;
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = 'rgba(0,0,0,0.12)';
   ctx.shadowBlur = 40;
@@ -1010,170 +1036,222 @@ function generatePoster() {
   ctx.shadowBlur = 0;
   ctx.shadowOffsetY = 0;
 
-  // Header strip
-  const headerH = 280;
-  const headerGrad = ctx.createLinearGradient(0, cardY, 0, cardY + headerH);
-  headerGrad.addColorStop(0, resultChar.color);
-  headerGrad.addColorStop(1, resultChar.colorDark);
-  ctx.fillStyle = headerGrad;
-  ctx.beginPath();
-  ctx.moveTo(cardX + 24, cardY);
-  ctx.lineTo(cardX + cardW - 24, cardY);
-  ctx.lineTo(cardX + cardW, cardY + headerH);
-  ctx.lineTo(cardX, cardY + headerH);
-  ctx.closePath();
-  ctx.fill();
-
-  // Clip header to card top
+  // ── 顶部彩色 Header ──
+  const headerH = 260;
   ctx.save();
   ctx.beginPath();
   roundRect(ctx, cardX, cardY, cardW, cardH, 24);
   ctx.clip();
+  const headerGrad = ctx.createLinearGradient(0, cardY, 0, cardY + headerH);
+  headerGrad.addColorStop(0, resultChar.color);
+  headerGrad.addColorStop(1, resultChar.colorDark);
   ctx.fillStyle = headerGrad;
   ctx.fillRect(cardX, cardY, cardW, headerH);
   ctx.restore();
 
   // Emoji
-  ctx.font = '100px sans-serif';
+  ctx.font = '90px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(resultChar.emoji, W / 2, cardY + 120);
+  ctx.fillText(resultChar.emoji, W / 2, cardY + 110);
 
-  // Name ZH
+  // 名字
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 48px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(resultChar.nameZH, W / 2, cardY + 200);
+  ctx.font = 'bold 46px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
+  ctx.fillText(resultChar.nameZH, W / 2, cardY + 178);
+  ctx.font = '18px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.fillText(resultChar.nameEN, W / 2, cardY + 210);
 
-  // Name EN
-  ctx.font = '20px "PingFang SC","Microsoft YaHei",sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.fillText(resultChar.nameEN, W / 2, cardY + 235);
-
-  // Match percentage
+  // 匹配度
   const pct = Math.min(98, Math.max(60,
     Math.round((scores[resultChar.id] / Object.values(scores).reduce((a, b) => a + b, 0)) * 100) + 30
   ));
-  ctx.font = 'bold 80px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.font = 'bold 72px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(pct + '%', W / 2, cardY + headerH - 20);
+  ctx.fillText(pct + '%', W / 2, cardY + headerH - 14);
 
-  // Body text
-  const bodyY = cardY + headerH + 50;
+  // ── 正文区域 ──
+  const pad = cardX + 32;
+  const contentW = cardW - 64;
+  let y = cardY + headerH + 36;
+  const isZH = lang === 'ZH';
+
+  // 辅助：画标签
+  function drawLabel(text) {
+    ctx.fillStyle = '#b2bec3';
+    ctx.font = 'bold 12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(text, pad, y);
+    y += 20;
+  }
+
+  // 辅助：画正文（自动换行）
+  function drawBody(text, fontSize, lineH, color) {
+    ctx.fillStyle = color || '#2d3436';
+    ctx.font = (fontSize || 17) + 'px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
+    ctx.textAlign = 'left';
+    const lines = wrapLines(ctx, text, contentW);
+    lines.forEach(line => {
+      ctx.fillText(line, pad, y);
+      y += lineH || 28;
+    });
+  }
+
+  // 1) 灵魂共鸣度
+  drawLabel(isZH ? '💬 灵魂共鸣' : '💬 Soul Resonance');
+  drawBody(isZH ? resultChar.descZH : resultChar.descEN, 17, 28);
+  y += 8;
+
+  // 2) 来源
+  drawLabel(isZH ? '📖 来源' : '📖 Source');
+  drawBody(resultChar.source, 15, 24, '#636e72');
+  y += 8;
+
+  // 3) 性格标签
+  drawLabel(isZH ? '🏷 性格标签' : '🏷 Traits');
+  const traits = isZH ? resultChar.traitsZH : resultChar.traitsEN;
+  let tagX = pad;
+  let tagStartY = y;
+  traits.forEach(tag => {
+    const tagW = ctx.measureText(tag).width + 28;
+    if (tagX + tagW > pad + contentW) {
+      tagX = pad;
+      y += 34;
+    }
+    ctx.fillStyle = '#f8f9fa';
+    roundRect(ctx, tagX, y - 14, tagW, 28, 14);
+    ctx.fill();
+    ctx.fillStyle = '#636e72';
+    ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(tag, tagX + 14, y + 4);
+    tagX += tagW + 10;
+  });
+  y = Math.max(y + 28, tagStartY + 42);
+  y += 6;
+
+  // 4) 灵魂金句
+  drawLabel(isZH ? '✨ 灵魂金句' : '✨ Signature Quote');
+  const quote = isZH ? resultChar.quoteZH : resultChar.quoteEN;
+  ctx.fillStyle = '#fdf6f0';
+  roundRect(ctx, pad, y - 2, contentW, 54, 12);
+  ctx.fill();
+  ctx.fillStyle = '#ff9a56';
+  ctx.fillRect(pad + 4, y + 4, 3, 36);
+  ctx.fillStyle = '#2d3436';
+  ctx.font = 'italic 16px "PingFang SC","Georgia",serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('"' + quote + '"', pad + 18, y + 28);
+  y += 60;
+  y += 8;
+
+  // 5) 推荐阅读
+  drawLabel(isZH ? '📚 推荐阅读' : '📚 Recommended Read');
+  ctx.fillStyle = '#f8f9fa';
+  roundRect(ctx, pad, y - 2, contentW, 36, 12);
+  ctx.fill();
+  ctx.fillStyle = '#2d3436';
+  ctx.font = '15px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'left';
+  const bookText = isZH ? resultChar.bookZH : resultChar.bookEN;
+  ctx.fillText('📚  ' + bookText, pad + 14, y + 22);
+  y += 50;
+
+  // 6) 二维码区域
+  y += 4;
+  const qrSize = 140;
+  const qrY = y;
+  const leftQRCenter = W / 2 - 100;
+  const rightQRCenter = W / 2 + 100;
+
+  // 加载二维码（超时或失败则显示占位框）
+  const [xhsQR, reviewQR] = await Promise.all([
+    loadQR(XHS_URL),
+    loadQR(REVIEW_URL)
+  ]);
+
+  function drawQRPlaceholder(cx, cy, label) {
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    roundRect(ctx, cx - qrSize/2, cy, qrSize, qrSize, 12);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#b2bec3';
+    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, cx, cy + qrSize/2 + 4);
+  }
+
+  // 左：小红书
+  if (xhsQR) {
+    ctx.drawImage(xhsQR, leftQRCenter - qrSize/2, qrY, qrSize, qrSize);
+  } else {
+    drawQRPlaceholder(leftQRCenter, qrY, '小红书');
+  }
   ctx.fillStyle = '#636e72';
   ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(lang === 'ZH' ? '灵魂共鸣度' : 'Soul Match', W / 2, bodyY);
+  ctx.fillText(isZH ? '关注小红书' : 'Follow on RED', leftQRCenter, qrY + qrSize + 20);
 
-  // Description
-  const desc = lang === 'ZH' ? resultChar.descZH : resultChar.descEN;
-  ctx.fillStyle = '#2d3436';
-  ctx.font = '18px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif';
-  ctx.textAlign = 'center';
-  wrapText(ctx, desc, W / 2, bodyY + 50, cardW - 80, 32);
+  // 右：好评
+  if (reviewQR) {
+    ctx.drawImage(reviewQR, rightQRCenter - qrSize/2, qrY, qrSize, qrSize);
+  } else {
+    drawQRPlaceholder(rightQRCenter, qrY, '好评');
+  }
+  ctx.fillStyle = '#636e72';
+  ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
+  ctx.fillText(isZH ? '扫码给个好评' : 'Leave a review', rightQRCenter, qrY + qrSize + 20);
 
-  // Quote
-  const quoteY = bodyY + 200;
-  ctx.fillStyle = '#ff9a56';
-  ctx.fillRect(cardX + 40, quoteY - 8, 4, 60);
-  ctx.fillStyle = '#2d3436';
-  ctx.font = 'italic 20px "PingFang SC","Microsoft YaHei","Hiragino Sans GB",serif';
-  ctx.textAlign = 'left';
-  wrapText(ctx, '"' + (lang === 'ZH' ? resultChar.quoteZH : resultChar.quoteEN) + '"',
-    cardX + 64, quoteY + 10, cardW - 120, 30);
+  y = qrY + qrSize + 40;
 
-  // Footer
-  const footerY = cardY + cardH - 80;
+  // ── 底部 ──
+  y += 10;
   ctx.fillStyle = '#b2bec3';
   ctx.font = '16px "PingFang SC","Microsoft YaHei",sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(lang === 'ZH' ? '你与哪位不朽的主角共享灵魂？' : 'Which immortal protagonist shares your soul?',
-    W / 2, footerY);
+  ctx.fillText(
+    isZH ? '你与哪位不朽的主角共享灵魂？' : 'Which immortal protagonist shares your soul?',
+    W / 2, y
+  );
+  y += 26;
   ctx.fillStyle = '#c9a7d4';
   ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
-  ctx.fillText(lang === 'ZH' ? '扫码来测 →' : 'Scan to take the quiz →',
-    W / 2, footerY + 28);
+  ctx.fillText(isZH ? '扫码来测，找到你的灵魂共鸣 →' : 'Scan to find your soul match →', W / 2, y);
 
-  // Return data URL
   return canvas.toDataURL('image/png', 0.92);
 }
 
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const chars = text.split('');
-  let line = '';
-  let currentY = y;
-  for (let i = 0; i < chars.length; i++) {
-    const testLine = line + chars[i];
-    const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxWidth && line.length > 0) {
-      ctx.fillText(line, x, currentY);
-      line = chars[i];
-      currentY += lineHeight;
+// 辅助：Canvas 文字换行
+function wrapLines(ctx, text, maxWidth) {
+  const lines = [];
+  let current = '';
+  for (const char of text) {
+    const test = current + char;
+    if (ctx.measureText(test).width > maxWidth && current.length > 0) {
+      lines.push(current);
+      current = char;
     } else {
-      line = testLine;
+      current = test;
     }
   }
-  if (line.length > 0) {
-    ctx.fillText(line, x, currentY);
+  if (current) lines.push(current);
+  return lines;
+}
+
+async function showPoster() {
+  try {
+    const dataUrl = await generatePoster();
+    $id('posterImage').src = dataUrl;
+    $id('posterOverlay').classList.add('show');
+  } catch (e) {
+    alert(t('海报生成失败，请重试', 'Poster generation failed, please retry'));
   }
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.arcTo(x + w, y, x + w, y + r, r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-  ctx.lineTo(x + r, y + h);
-  ctx.arcTo(x, y + h, x, y + h - r, r);
-  ctx.lineTo(x, y + r);
-  ctx.arcTo(x, y, x + r, y, r);
-  ctx.closePath();
-}
-
-function showPoster() {
-  const dataUrl = generatePoster();
-  $id('posterImage').src = dataUrl;
-  $id('posterOverlay').classList.add('show');
 }
 
 function hidePoster() {
   $id('posterOverlay').classList.remove('show');
-}
-
-// ============================================================
-// SHARE LINK
-// ============================================================
-
-async function shareLink() {
-  const title = t(
-    '你与哪位不朽的主角共享灵魂？',
-    'Which immortal protagonist shares your soul?'
-  );
-  const text = t(
-    `我的灵魂与「${resultChar.nameZH}」共鸣最深！来测测你的灵魂伴侣是谁 →`,
-    `My soul resonates most with "${resultChar.nameEN}"! Find your soul match →`
-  );
-  const url = window.location.href;
-
-  if (navigator.share) {
-    try {
-      await navigator.share({ title, text, url });
-    } catch (e) {
-      copyLink(text, url);
-    }
-  } else {
-    copyLink(text, url);
-  }
-}
-
-function copyLink(text, url) {
-  const copyStr = text + ' ' + url;
-  navigator.clipboard.writeText(copyStr).then(() => {
-    alert(t('✅ 链接已复制！去粘贴分享吧～', '✅ Link copied! Paste to share~'));
-  }).catch(() => {
-    prompt(t('手动复制以下内容分享：', 'Copy manually:'), copyStr);
-  });
 }
 
 // ============================================================
@@ -1212,7 +1290,6 @@ function init() {
 
   $id('langToggle').addEventListener('click', toggleLang);
   $id('sharePosterBtn').addEventListener('click', showPoster);
-  $id('shareLinkBtn').addEventListener('click', shareLink);
   $id('retakeBtn').addEventListener('click', retakeQuiz);
   $id('posterClose').addEventListener('click', hidePoster);
   $id('posterOverlay').addEventListener('click', function(e) {
